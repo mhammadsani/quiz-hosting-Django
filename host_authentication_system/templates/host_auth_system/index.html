@@ -1,0 +1,13 @@
+{% extends "authentication_system.html" %}
+
+
+{% block title %}
+    <title>HomePage</title>
+{% endblock title %}
+
+
+{% block content %}
+    <h2> Welcome to the HomePage of Quiz Hosting Platform </h2>
+    <a href=" {% url "signup" %}">Sign Up</a> <br>
+    <a href="{% url "login" %}">Login</a>
+{% endblock content %}

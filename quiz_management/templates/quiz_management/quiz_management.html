@@ -1,0 +1,12 @@
+{% extends "authentication_system.html" %}
+
+{% block title %}
+    <title>Quiz Management</title>
+{% endblock title %}
+
+{% block content %}
+    <a href="{% url "addquiz" %}"> Add Quiz </a> <br> <br>
+    <a href="{% url "draftquizzes" %}">Drafts</a> <br> <br>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock content %}
+

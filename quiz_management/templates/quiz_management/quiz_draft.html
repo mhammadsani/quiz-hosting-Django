@@ -1,0 +1,26 @@
+{% extends "authentication_system.html" %}
+
+
+{% block title %}
+    <title>Current Quiz</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>  {{ quiz }}  | Quiz Draft </h1>
+    <a href="{% url "addquestion" quiz.id %}"></a>
+    <nav>
+        <a href="{% url "questiontype" quiz.id "mcq" %}"> Multiple Choice Question </a> <br> <br>
+        <a href="{% url "questiontype" quiz.id "subjective" %}"> Subjective Question </a> <br> <br>
+        <a href="{% url "questiontype" quiz.id "binary" %}"> Binary Choice </a> <br> <br>
+    </nav>
+
+    <br>
+    <a href="{% url "quizmanagement" %}"> Quiz Management </a>
+
+    {% comment %} <h3>Current Questions</h3>
+    {% for question in questions %}
+       {{ question.id }} <br>
+       {{ question.question_details  }}
+
+    {% endfor %} {% endcomment %}
+{% endblock content %}

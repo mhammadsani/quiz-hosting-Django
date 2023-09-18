@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hosts</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% for host in hosts %}
+            {% if host.is_active == False %}
+                {{ host }}  || <input type="checkbox" name="hosts_to_approve" value="{{ host.username }}" id="is_active"> <br>
+            {% endif %}
+        {% endfor %}
+        <br><br>
+        <input type="submit" value="Approve">
+    </form>
+    <br><br>
+    <a href="{% url "profile" %}"> Profile </a>
+</body>
+</html>

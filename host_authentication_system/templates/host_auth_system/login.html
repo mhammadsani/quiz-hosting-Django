@@ -1,0 +1,28 @@
+{% extends "authentication_system.html" %}
+
+
+{% block title %}
+    <title>Login</title>
+{% endblock title %}
+
+
+{% block content %}
+    <h2>Welcome to Login Page</h2> <br> <br>
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p> {{ error }} </p> 
+        {% endfor %}
+    {% endif %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {% for fm in form %}
+            {{ fm.label_tag }} {{ fm }} {{ fm.errors }} <br><br>
+        {% endfor %}
+        <input type="submit" value="Login">
+    </form>
+    <br> 
+    <a href="{% url "homepage" %}">HomePage</a> || 
+    <a href="{% url "signup" %}">Sign Up</a> <br> <br>
+
+{% endblock content %}
+

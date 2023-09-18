@@ -1,0 +1,31 @@
+{% extends "authentication_system.html" %}
+
+{% block title %}
+    <title>Add Question</title>
+{% endblock title %}
+
+
+{% block content %}
+
+    <br> <br>
+    <form action="">
+        {% csrf_token %}
+        {% for field in question %}
+            {{ field.label_tag }} {{ field }} {{ fields.errors }} <br> <br>
+        {% endfor %}
+    </form>
+    {% if question_form %}
+        {% if questoin_type == mcq %}
+            <form action="" method="POST" novalidate>
+                {% csrf_token %}
+                {% for question_info in  question_form %}
+                    {{ question_info.label_tag }} {{ question_info }} {{ question_info.errors }} <br> <br>
+            {% endfor %}
+        {% endif %}
+        <input type="submit" value="Add">
+        </form>
+    {% endif %}
+    <br>
+    <a href="{% url "quizmanagement" %}"> Quiz Management </a>
+{% endblock content %}
+

@@ -1,0 +1,10 @@
+{% extends "authentication_system.html" %}
+
+{% block title %}
+    <title>Wait</title>
+{% endblock title %}
+
+{% block content %}
+    <h1>You cannot login right now, Admin will check if you are Host or Not </h1>
+    <a href="{% url "homepage" %}">HomePage</a>
+{% endblock content %}
