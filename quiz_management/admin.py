@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quiz, QuizAttempter, Question
+from .models import Quiz, QuizAttempter, Question, Announcement
 
 
 @admin.register(Quiz)
@@ -9,7 +9,7 @@ class QuizAdmin(admin.ModelAdmin):
 
 @admin.register(QuizAttempter)
 class QuizAttempterAdmin(admin.ModelAdmin):
-    list_display = ['host', 'email', 'full_name', 'password']
+    list_display = ['username', 'password']
     
 
 @admin.register(Question)
@@ -21,3 +21,7 @@ class QuestionAdmin(admin.ModelAdmin):
     # question = models.JSONField()
     # is_public = models.BooleanField(default=False)
     # question_marks = models.IntegerField(default=1)
+
+@admin.register(Announcement)
+class AnnoucementAdmin(admin.ModelAdmin):
+    list_display = ['host', 'quiz', 'subject', 'details']

@@ -1,9 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from .forms import HostSignUpForm
+from quiz_management.models import QuizAttempter
 
 
 def homepage(request):
@@ -28,6 +30,7 @@ def sign_up(request):
 
 
 def user_login(request):
+    
     if request.user.is_authenticated:
         return HttpResponseRedirect('/profile/')
     if request.method == "POST":
@@ -38,6 +41,9 @@ def user_login(request):
            user = authenticate(username=username, password=password)
            if user:
                login(request, user=user)
+            #    user = QuizAttempter.objects.get(username=username)
+            #    if user.is_quiz_attempter:
+            #        return HttpResponseRedirect('/quiz_attempter_homepage/')
                return HttpResponseRedirect('/profile/')
         form = user_data
     else:       

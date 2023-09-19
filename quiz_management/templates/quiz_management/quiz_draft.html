@@ -11,7 +11,7 @@
     <nav>
         <a href="{% url "questiontype" quiz.id "mcq" %}"> Multiple Choice Question </a> <br> <br>
         <a href="{% url "questiontype" quiz.id "subjective" %}"> Subjective Question </a> <br> <br>
-        <a href="{% url "questiontype" quiz.id "binary" %}"> Binary Choice </a> <br> <br>
+        {% comment %} <a href="{% url "questiontype" quiz.id "binary" %}"> Binary Choice </a> <br> <br> {% endcomment %}
     </nav>
 
     <br>

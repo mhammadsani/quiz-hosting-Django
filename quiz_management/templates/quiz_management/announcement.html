@@ -1,0 +1,24 @@
+{% extends "authentication_system.html" %}
+
+
+{% block title %}
+    <title>Announcement</title>
+{% endblock title %}
+
+
+{% block content %}
+    <form action="" method="POST" novalidate>
+        {% csrf_token %}
+        {% for form_details in announcement_form  %}
+            {{ form_details.label_tag }} {{ form_details }} {{ form_details.errors }} <br> <br>
+        {% endfor %}
+        <input type="submit" value="Announce">
+    </form>
+    
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+
+    {% for message in messages %}
+        {{message}}
+    {% endfor %}
+
+{% endblock content %}

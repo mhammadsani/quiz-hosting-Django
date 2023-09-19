@@ -1,12 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
-
-
-class QuizAttempter(models.Model):
-    host = models.ForeignKey(User, on_delete=models.CASCADE)
-    email = models.EmailField(primary_key=True)
-    full_name = models.CharField(max_length=120)
-    password = models.CharField(max_length=30)
+from django.contrib.auth.models import User, AbstractUser
 
 
 class Quiz(models.Model):
@@ -31,4 +24,16 @@ class Question(models.Model):
     def __str__(self) -> str:
         return "Question " + str(self.id)
     
-     
+    
+class QuizAttempter(User):
+    quiz_id = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    is_quiz_attempter = models.BooleanField(default=True, null=True)
+    
+    
+class Announcement(models.Model):
+    host = models.ForeignKey(User, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=200)
+    details = models.TextField()
+    # preparation_material = models.FileField(blank=True)
+    

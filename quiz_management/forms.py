@@ -1,5 +1,5 @@
 from django import forms
-from .models import Quiz, QuizAttempter, Question
+from .models import Quiz, QuizAttempter, Question, Announcement
 
 
 class QuizAttempterForm(forms.ModelForm):
@@ -44,5 +44,30 @@ class MCQsQuestionForm(forms.Form):
     )
     marks = forms.DecimalField(label='Marks')
     is_public = forms.BooleanField(required=False)
-
     
+
+class SubjectiveQuestionForm(forms.Form):
+    title = forms.CharField(label="Question Title", max_length=200)
+    answer = forms.CharField(label="Correct Answer", max_length=400, required=False)
+    marks = forms.DecimalField(label="Marks")
+    is_public = forms.BooleanField(required=False)
+    
+
+# class BooleanQuestionForm(forms.Form):
+#     title = forms.CharField(label="Queston Title", max_length=200)
+#     answer = forms.ChoiceField(
+#         label="Answer",
+#         choices=[("true", "True"), ("false", "False")],
+#         widget=forms.RadioSelect,
+#         required=True,
+#     )
+   
+
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ['subject', 'details']
+        # widget = {
+        #     'preparation_material': forms.FileField(required=False)
+        # }
+        

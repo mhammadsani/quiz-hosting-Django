@@ -9,5 +9,7 @@ urlpatterns = [
     path('draft_quizzes/', views.draft_quizzes, name="draftquizzes"),
     path('add_question/<int:quiz_id>/', views.add_questions, name='addquestion'),
     path('question/<int:quiz_id>/<str:type>/', views.queston, name="questiontype"),
-    path('edit_draft/<int:quiz_id>/', views.open_draft, name="draft")
+    path('edit_draft/<int:quiz_id>/', views.open_draft, name="draft"),
+    path('add_quiz_attempter/<int:quiz_id>/', views.add_quiz_attempter, name="addquizattempter" ), 
+    path('add_announcement/<int:quiz_id>/', views.add_announcement, name="announcement")
 ]

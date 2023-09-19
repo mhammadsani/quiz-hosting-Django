@@ -1,14 +1,14 @@
-# import random
-# import string
+import random
+import string
 
 
-# def get_random_password(length=16):
-#     characters = string.ascii_letters + string.digits
-#     password = ""
-#     for _ in range(length):
-#         random_number = random.randint(0, len(characters) - 1)
-#         password += characters[random_number]
-#     return password
+def generate_password(length=16):
+    characters = string.ascii_letters + string.digits
+    password = ""
+    for _ in range(length):
+        random_number = random.randint(0, len(characters) - 1)
+        password += characters[random_number]
+    return password
 
 
 

@@ -1,9 +1,11 @@
 import json
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm
-from .models import QuizAttempter, Quiz, Question
+from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm
+from .models import QuizAttempter, Quiz, Question, Announcement
+from .utils import generate_password
 
 
 def quiz_management_homepage(request):
@@ -37,7 +39,8 @@ def add_quiz(request):
                     host=request.user, title=title, category=category, start_time=start_time, end_time=end_time
                     )
                 quiz.save()
-                quiz_form = quiz_form
+                quiz_form = QuizForm()
+                
         else:       
             quiz_form = QuizForm()
         return render(request, 'quiz_management/add_quiz.html', {'quiz_form': quiz_form})
@@ -62,6 +65,7 @@ def approve_host(in_active_hosts):
 
 
 def host_management(request):
+    
     if request.user.is_authenticated and request.user.username == 'admin':
         if request.method == "POST":
             in_active_hosts = request.POST.getlist('hosts_to_approve')
@@ -86,10 +90,6 @@ def open_draft(request, quiz_id):
         print(question.question_details)
         print(question.marks)
         print(question.is_public)
-    
-        
-    
-
     return render(request, 'quiz_management/quiz_draft.html', {'quiz': quiz, 
                                                                'questions': questions})
 
@@ -114,7 +114,19 @@ def mcq_question(question_form):
             {'option4': option4, 'is_correct_answer': 'option4' == answer },
             ]
         }
-    return question_details, marks, is_public
+    return json.dumps(question_details), marks, is_public
+
+
+def subjective_question(question_form):
+    question_title = question_form.cleaned_data['title']
+    answer = question_form.cleaned_data['answer']
+    marks = question_form.cleaned_data['marks']
+    is_public = question_form.cleaned_data['is_public']
+    question_details = {
+        'question_title': question_title, 
+        'answers': answer
+    }
+    return json.dumps(question_details), marks, is_public
 
 
 def queston(request, quiz_id, type):
@@ -123,27 +135,78 @@ def queston(request, quiz_id, type):
             question_form = MCQsQuestionForm(request.POST)
             if question_form.is_valid():
                 question_details, marks, is_public = mcq_question(question_form)
-                question_details_json = json.dumps(question_details)
                 quiz = Quiz.objects.get(pk=quiz_id)
-                question = Question.objects.create(question_details=question_details_json, marks=marks, is_public=is_public)
+                question = Question.objects.create(question_details=question_details, marks=marks, is_public=is_public)
                 question.quiz.add(quiz)
                 question.save()
+                messages.success(request, "MCQ added successfully!")
                 return HttpResponseRedirect('/quiz_management/question/1/mcq/')
             
             return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
-                                                                 'question_type': "mcqs",
-                                                                 })
-        
+                                                                        'question_type': type,
+                                                                        })  
+        elif type == "subjective":
+            question_form = SubjectiveQuestionForm(request.POST)
+            if question_form.is_valid():
+                question_details, marks, is_public = subjective_question(question_form)
+                quiz = Quiz.objects.get(pk=quiz_id)
+                question = Question.objects.create(question_details=question_details, marks=marks, is_public=is_public)
+                question.quiz.add(quiz)
+                question.save()
+                messages.success(request, "Subjective Question Added Successfully!")
+                return HttpResponseRedirect('/quiz_management/question/2/subjective/')
+                
     else:      
         if type == "mcq":
             question_form = MCQsQuestionForm()
-            question_type = "mcqs"
-            print("working")
         elif type == "subjective":
-            question_form = "This is Subjective"
+            question_form = SubjectiveQuestionForm()
         else:
             question_form = "This is Binary Choice"
         
         return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
-                                                                 'question_type': question_type
+                                                                 'question_type': type
                                                                  })
+
+
+def generate_username(email):
+    email = email.split('@')
+    return email[0]
+
+
+def add_quiz_attempter(request, quiz_id):
+    if request.method == "POST":
+        quiz_attempter_form = QuizAttempterForm(request.POST)
+        if quiz_attempter_form.is_valid():
+            email = quiz_attempter_form.cleaned_data['email']
+            username = generate_username(email)
+            password = generate_password()
+            quiz = Quiz.objects.get(pk=quiz_id)
+            quiz_attempter = QuizAttempter.objects.create(username=username, email=email, quiz_id=quiz)
+            quiz_attempter.set_password(password)
+            quiz_attempter.save()
+            quiz_attempter_form = QuizAttempterForm()
+    else:       
+        quiz_attempter_form = QuizAttempterForm()
+    quiz_attempters = QuizAttempter.objects.filter(pk=quiz_id)
+    print(quiz_attempters)
+    return render(request, 'quiz_management/add_quiz_attempter.html', {'quiz_attempter_form': quiz_attempter_form,
+                                                                       'quiz_attempters': quiz_attempters
+                                                                       })
+    
+
+def add_announcement(request, quiz_id):
+    if request.method == "POST":
+        announcement_form = AnnouncementForm(request.POST)
+        if announcement_form.is_valid():
+            subject = announcement_form.cleaned_data['subject']
+            details = announcement_form.cleaned_data['details']
+            # preparation_meterial = announcement_form.cleaned_data['preparation_material']
+            quiz = Quiz.objects.get(pk=quiz_id)
+            announcement = Announcement(host=request.user, quiz=quiz, subject=subject, details=details)
+            announcement.save()
+            announcement_form = AnnouncementForm()
+            messages.success(request, "Announcement Done")
+    else:
+        announcement_form = AnnouncementForm()
+    return render(request, 'quiz_management/announcement.html', {'announcement_form': announcement_form})

@@ -10,7 +10,9 @@
         {% for quiz in quizzes %}
             {% if quiz.host == host %}
             
-            <h3>Quiz Title is :{{ quiz.title }}</h3> <a href="{% url "draft"  quiz.id %}"> Edit Draft </a>  
+            <h3>Quiz Title is :{{ quiz.title }}</h3> <a href="{% url "draft"  quiz.id %}"> Edit Draft </a>    || 
+            <br> <a href="{% url "addquizattempter" quiz.id %}"> Add Quiz Attempters </a>  ||
+            <br> <a href="{% url "announcement" quiz.id %}">Announcement</a>
             <h4> ============================== </h4>
             {% endif %}
         {% endfor %}

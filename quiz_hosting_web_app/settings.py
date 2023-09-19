@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'host_authentication_system',
     'quiz_management',
+    'quiz_attempter_management'
 ]
 
 MIDDLEWARE = [
@@ -75,6 +76,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+
+# AUTH_USER_MODEL = 'YourAppName.YourClassName'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
