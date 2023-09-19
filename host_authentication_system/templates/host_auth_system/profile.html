@@ -5,7 +5,7 @@
 {% endblock title %}
 {% block content %}
     <h3>Welcome {{ user }}</h3> 
-    {% if user.username == "admin" %}
+    {% if user.is_superuser %}
         <a href="{% url "hostmanagement" %}">Host Management</a> <br><br>
     {% else %}
         <a href="{% url "quizmanagement" %}">Quiz Management Homepage</a> <br><br>

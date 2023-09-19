@@ -39,6 +39,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'host_authentication_system.middlewares.UserIdentificatonMiddlewere'
 ]
 
 ROOT_URLCONF = 'quiz_hosting_web_app.urls'

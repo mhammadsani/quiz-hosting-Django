@@ -29,6 +29,8 @@ class QuizAttempter(User):
     quiz_id = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     is_quiz_attempter = models.BooleanField(default=True, null=True)
     
+    def __str__(self) -> str:
+        return "Quiz Attempter " + str(self.id)
     
 class Announcement(models.Model):
     host = models.ForeignKey(User, on_delete=models.CASCADE)

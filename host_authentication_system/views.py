@@ -3,9 +3,9 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import HostSignUpForm
-from quiz_management.models import QuizAttempter
+from quiz_management.models import QuizAttempter, Quiz
 
 
 def homepage(request):
@@ -30,7 +30,6 @@ def sign_up(request):
 
 
 def user_login(request):
-    
     if request.user.is_authenticated:
         return HttpResponseRedirect('/profile/')
     if request.method == "POST":
@@ -40,11 +39,27 @@ def user_login(request):
            password = user_data.cleaned_data['password']
            user = authenticate(username=username, password=password)
            if user:
-               login(request, user=user)
-            #    user = QuizAttempter.objects.get(username=username)
-            #    if user.is_quiz_attempter:
-            #        return HttpResponseRedirect('/quiz_attempter_homepage/')
-               return HttpResponseRedirect('/profile/')
+                login(request, user=user)
+            #    if user.is_admin:
+            #         return redirect('admin_dashboard')
+            #    elif user.is_host:
+            #         return redirect('host_dashboard')
+            #    elif user.is_quiz_attempter:
+            #         return redirect('quiz_attempter_dashboard')
+                try:
+                    if temp_user:=QuizAttempter.objects.get(username=username):
+                        quiz = Quiz.objects.get(pk=temp_user.quiz_id.id)
+                        # for quiz in quizes:
+                        #     print(quiz.id)
+                        #     print(quiz.is_quiz_attempted)
+                        #     print(quiz.title)
+                        # print("User Quiz is ", temp_user.quiz_id.id)
+                        if temp_user.is_quiz_attempter:
+                            print("QUiz id is ", quiz.id)
+                            return render(request, 'quiz_attempter_management/profile.html/', {'quiz': quiz})
+                except Exception as err:
+                    print("FOllowing exception is occuring ", err)
+                    return HttpResponseRedirect('/profile/')
         form = user_data
     else:       
         form = AuthenticationForm()
@@ -57,6 +72,7 @@ def waitpage(request):
 
 def profile(request):
     if request.user.is_authenticated:
+        print("I am the main User", dir(request.user))
         return render(request, 'host_auth_system/profile.html', {'user': request.user})
     return HttpResponseRedirect('/')
 

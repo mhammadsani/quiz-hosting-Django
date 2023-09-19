@@ -10,6 +10,10 @@ def generate_password(length=16):
         password += characters[random_number]
     return password
 
+def generate_username(email):
+    email = email.split('@')
+    return email[0]
+
 
 
 

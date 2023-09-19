@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm
 from .models import QuizAttempter, Quiz, Question, Announcement
-from .utils import generate_password
+from .utils import generate_password, generate_username
 
 
 def quiz_management_homepage(request):
@@ -38,7 +38,9 @@ def add_quiz(request):
                 quiz = Quiz(
                     host=request.user, title=title, category=category, start_time=start_time, end_time=end_time
                     )
+                print(request.user)
                 quiz.save()
+                messages.success(request, "Quiz Added Successfully")
                 quiz_form = QuizForm()
                 
         else:       
@@ -66,13 +68,12 @@ def approve_host(in_active_hosts):
 
 def host_management(request):
     
-    if request.user.is_authenticated and request.user.username == 'admin':
+    if request.user.is_authenticated and request.user.is_superuser:
         if request.method == "POST":
             in_active_hosts = request.POST.getlist('hosts_to_approve')
             print('in active hosts are ', in_active_hosts)
             approve_host(in_active_hosts)
-        
-        
+
         hosts = User.objects.all()
         return render(request, 'quiz_management/host_management.html', {'hosts': hosts})
     else:
@@ -169,10 +170,6 @@ def queston(request, quiz_id, type):
                                                                  })
 
 
-def generate_username(email):
-    email = email.split('@')
-    return email[0]
-
 
 def add_quiz_attempter(request, quiz_id):
     if request.method == "POST":
@@ -181,10 +178,12 @@ def add_quiz_attempter(request, quiz_id):
             email = quiz_attempter_form.cleaned_data['email']
             username = generate_username(email)
             password = generate_password()
+            print(username, password)
             quiz = Quiz.objects.get(pk=quiz_id)
             quiz_attempter = QuizAttempter.objects.create(username=username, email=email, quiz_id=quiz)
             quiz_attempter.set_password(password)
             quiz_attempter.save()
+            messages.success(request, "Quiz Attempter Added for the quiz")
             quiz_attempter_form = QuizAttempterForm()
     else:       
         quiz_attempter_form = QuizAttempterForm()

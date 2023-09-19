@@ -15,5 +15,10 @@
         {{ quiz_attempter.username }} || {{ quiz_attempter.email }}
     {% endfor %}
     <br> <br>
+    {% if messages %}
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    {% endif %}
     <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
 {% endblock content %}
