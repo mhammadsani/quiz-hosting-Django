@@ -58,7 +58,7 @@ def user_login(request):
                             print("QUiz id is ", quiz.id)
                             return render(request, 'quiz_attempter_management/profile.html/', {'quiz': quiz})
                 except Exception as err:
-                    print("FOllowing exception is occuring ", err)
+                    print("Following exception is occuring ", err)
                     return HttpResponseRedirect('/profile/')
         form = user_data
     else:       

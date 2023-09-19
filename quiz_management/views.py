@@ -113,7 +113,8 @@ def mcq_question(question_form):
             {'option2': option2, 'is_correct_answer': 'option2' == answer },
             {'option3': option3, 'is_correct_answer': 'option3' == answer },
             {'option4': option4, 'is_correct_answer': 'option4' == answer },
-            ]
+            ],
+        'type': 'mcq'
         }
     return json.dumps(question_details), marks, is_public
 
@@ -125,7 +126,8 @@ def subjective_question(question_form):
     is_public = question_form.cleaned_data['is_public']
     question_details = {
         'question_title': question_title, 
-        'answers': answer
+        'answers': answer,
+        'type': 'subjective'
     }
     return json.dumps(question_details), marks, is_public
 
