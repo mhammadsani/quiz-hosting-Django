@@ -13,18 +13,6 @@ def quiz_management_homepage(request):
         return render(request, 'quiz_management/quiz_management.html')
     return HttpResponseRedirect('/')
 
-# def add_quiz_attempter(request):
-#     if request.method == "POST":
-#         quiz_attempter_form = QuizAttempterForm(request.POST)
-#         if quiz_attempter_form.is_valid():
-#             email = quiz_attempter_form.cleaned_data['email']
-#             password = get_random_password()
-#             host = request.user
-#             quiz_attempter = QuizAttempter(host=host, email=email, password=password)
-#             quiz_attempter.save()
-            
-#     quiz_attempter_form = QuizAttempterForm()
-#     return render(request, 'quiz_management/add_quiz_attempter.html', {'quiz_attmpter': quiz_attempter_form})
 
 def add_quiz(request):
     if request.user.is_authenticated:
@@ -67,7 +55,6 @@ def approve_host(in_active_hosts):
 
 
 def host_management(request):
-    
     if request.user.is_authenticated and request.user.is_superuser:
         if request.method == "POST":
             in_active_hosts = request.POST.getlist('hosts_to_approve')
@@ -158,7 +145,11 @@ def queston(request, quiz_id, type):
                 question.save()
                 messages.success(request, "Subjective Question Added Successfully!")
                 return HttpResponseRedirect('/quiz_management/question/2/subjective/')
-                
+            
+            return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
+                                                                        'question_type': type,
+                                                                        })  
+         
     else:      
         if type == "mcq":
             question_form = MCQsQuestionForm()

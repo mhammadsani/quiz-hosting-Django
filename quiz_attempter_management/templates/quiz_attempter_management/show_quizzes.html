@@ -1,0 +1,52 @@
+{% extends "authentication_system.html" %}
+
+{% block title %}
+    <title>Quizzes</title>
+    <head>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            table, th, td {
+                border: 1px solid black;
+            }
+
+            th, td {
+                padding: 10px;
+                text-align: center;
+            }
+
+            th {
+                background-color: #f2f2f2;
+            }
+        </style>
+    </head>
+{% endblock title %}
+
+{% block content %}
+    <table>
+        <thead>
+            <tr>
+                <th>Quiz Title</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Announcement</th>
+                <th>Attempt</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{quiz.title}}</td>
+                <td>{{quiz.start_time}}</td>
+                <td>{{quiz.end_time}}</td>
+                <td><a href="{% url "announcements" quiz.id %}"> Announcements </a></td>
+                <td><a href="{% url "attemptquiz" quiz.id %}">Attempt</a></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+
+{% endblock content %}

@@ -9,8 +9,8 @@ class Quiz(models.Model):
     is_quiz_attempted = models.BooleanField(default=False)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
-    
-    
+
+ 
     def __str__(self) -> str:
         return self.title
     

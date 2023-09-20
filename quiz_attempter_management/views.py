@@ -1,12 +1,25 @@
 import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from quiz_management.models import Question, QuizAttempter
+from quiz_management.models import Question, QuizAttempter, Announcement, Quiz
 from quiz_attempter_management.models import Answer, Mark
 
 
 def quiz_attempter_homepage(request):
     return render(request, 'quiz_attempter_management/profile.html')
+
+
+def show_quizzes(request):
+    quiz = QuizAttempter.objects.get(id=request.user.id).quiz_id
+    return render(request, 'quiz_attempter_management/show_quizzes.html', {'quiz': quiz})
+
+
+def show_announcements(request, quiz_id):
+    announcements = Announcement.objects.filter(quiz=quiz_id)
+    for announcement in announcements:
+        print(announcement.subject)
+        print(announcement.details)
+    return render(request, 'quiz_attempter_management/announcements.html', {'announcements': announcements})
 
 
 def save_marks(quiz_attempter):
@@ -25,8 +38,6 @@ def save_marks(quiz_attempter):
                 if option[key] == user_answer and option['is_correct_answer']:
                     mcq_marks += question.marks
                     mcq_total_marks += question.marks
-    
-    
     mark = Mark(quiz_attempter=quiz_attempter, marks=mcq_marks, quiz=quiz_attempter.quiz_id)
     mark.save()
 

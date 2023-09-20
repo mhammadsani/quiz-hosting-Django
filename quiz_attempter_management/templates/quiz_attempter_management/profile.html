@@ -6,10 +6,8 @@
 
 
 {% block content %}
-    Quiz id is {{ quiz.id }}
-    {{ quiz.title }}
-    {{ quiz.start_time }}
-    {{ quiz.end_time }}
-    {{ quiz.host }}
-    <a href="{% url 'attemptquiz' quiz.id %}"> Attempt Quiz </a>
+    <a href="{% url "showquizzes" %}"> Show Quizzes </a> <br> <br>
+    <a href="{% url "logout" %}">logout</a> <br> <br>
+    <a href="{% url "changepassword" %}">Change Password</a>
 {% endblock content %}
+

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from .forms import HostSignUpForm
-from quiz_management.models import QuizAttempter, Quiz
+from quiz_management.models import QuizAttempter, Quiz, Announcement
 
 
 def homepage(request):
@@ -50,8 +50,7 @@ def user_login(request):
                     if temp_user:=QuizAttempter.objects.get(username=username):
                         quiz = Quiz.objects.get(pk=temp_user.quiz_id.id)
                         if temp_user.is_quiz_attempter:
-                            print("QUiz id is ", quiz.id)
-                            return render(request, 'quiz_attempter_management/profile.html/', {'quiz': quiz})
+                            return redirect('/quiz_attempter_homepage/')
                 except Exception as err:
                     print("Following exception is occuring ", err)
                     return HttpResponseRedirect('/profile/')

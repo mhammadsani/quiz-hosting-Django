@@ -10,6 +10,7 @@
     {% else %}
         <a href="{% url "quizmanagement" %}">Quiz Management Homepage</a> <br><br>
     {% endif %}
+    {% comment %} <a href="{% url "quiz_attempter_homepage" %}">Quiz Attempter</a> {% endcomment %}
     <a href="{% url "logout" %}">Logout</a> <br> 
     <a href="{% url "changepassword" %}">Change Password</a> <br> 
 {% endblock content %}

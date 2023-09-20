@@ -48,7 +48,7 @@ class MCQsQuestionForm(forms.Form):
 
 class SubjectiveQuestionForm(forms.Form):
     title = forms.CharField(label="Question Title", max_length=200)
-    answer = forms.CharField(label="Correct Answer", max_length=400, required=False)
+    answer = forms.CharField(label="Correct Answer", max_length=400)
     marks = forms.DecimalField(label="Marks")
     is_public = forms.BooleanField(required=False)
     
