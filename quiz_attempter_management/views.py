@@ -1,24 +1,60 @@
 import json
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, HttpResponseRedirect
 from quiz_management.models import Question, QuizAttempter
-from quiz_attempter_management.models import Answer
+from quiz_attempter_management.models import Answer, Mark
 
 
 def quiz_attempter_homepage(request):
     return render(request, 'quiz_attempter_management/profile.html')
 
 
+def save_marks(quiz_attempter):
+    answers = Answer.objects.filter(quiz_attempter=quiz_attempter)
+    print(answers)
+    mcq_marks = 0
+    mcq_total_marks = 0
+    for answer in answers:
+        question = Question.objects.get(pk=answer.question.id)
+        user_answer = answer.answer
+        question_details = json.loads(question.question_details)
+        if question_details["type"] == "mcq":
+            options = question_details["answers"]
+            for option_number, option in enumerate(options):
+                key = f'option{option_number+1}'
+                if option[key] == user_answer and option['is_correct_answer']:
+                    mcq_marks += question.marks
+                    mcq_total_marks += question.marks
+    
+    
+    mark = Mark(quiz_attempter=quiz_attempter, marks=mcq_marks, quiz=quiz_attempter.quiz_id)
+    mark.save()
+
+
+def is_quiz_attemptted(user, quiz_id):
+    marks = Mark.objects.all()
+    for mark in marks:
+        if mark.quiz_attempter.id == user and mark.quiz_id == int(quiz_id):
+            return True
+    return False
+
+
 def attempt_quiz(request, quiz_id):
+    is_quiz_attempter_by_user = is_quiz_attemptted(request.user.id, quiz_id)
+    print(is_quiz_attempter_by_user)
+    if is_quiz_attempter_by_user:
+        return HttpResponse("Quiz is Already Attempted by You")
     final_questions = []
     if request.method == "POST":
         questions = Question.objects.filter(quiz=quiz_id)
+        quiz_attempter=QuizAttempter.objects.get(id=request.user.id)
         for question in questions:
             answer = request.POST.get(str(question.id))
-            user_answer = Answer(answer=answer, question=Question.objects.get(id=question.id), quiz_attempter=QuizAttempter.objects.get(id=request.user.id))
+            user_answer = Answer(answer=answer, question=Question.objects.get(id=question.id), quiz_attempter=quiz_attempter)
             user_answer.save()
+        save_marks(quiz_attempter)
     else:
         questions = Question.objects.filter(quiz=quiz_id)
-        # final_questions = []
         for question in questions:
             question_details = json.loads(question.question_details)
             question_title = question_details['question_title']
@@ -32,6 +68,11 @@ def attempt_quiz(request, quiz_id):
             })
     return render(request, "quiz_attempter_management/attempt_quiz.html", {'final_questions': final_questions})
 
+
+def marks(request):
+    marks = Mark.objects.get(quiz_attempter=request.user.id).marks
+    print(marks)
+    return render(request, 'quiz_attempter_management/marks.html', {'mcq_marks': marks})
 """
 {"question_title": "What is OS?", "answers": [{"option1": "subject", "is_correct_answer": false}, {"option2": "a way to interact with hardware", "is_correct_answer": false}, {"option3": "operating system", "is_correct_answer": false}, {"option4": "all", "is_correct_answer": true}]}
 1

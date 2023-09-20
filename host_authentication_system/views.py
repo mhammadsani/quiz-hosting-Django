@@ -49,11 +49,6 @@ def user_login(request):
                 try:
                     if temp_user:=QuizAttempter.objects.get(username=username):
                         quiz = Quiz.objects.get(pk=temp_user.quiz_id.id)
-                        # for quiz in quizes:
-                        #     print(quiz.id)
-                        #     print(quiz.is_quiz_attempted)
-                        #     print(quiz.title)
-                        # print("User Quiz is ", temp_user.quiz_id.id)
                         if temp_user.is_quiz_attempter:
                             print("QUiz id is ", quiz.id)
                             return render(request, 'quiz_attempter_management/profile.html/', {'quiz': quiz})

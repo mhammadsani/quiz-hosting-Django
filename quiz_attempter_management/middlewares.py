@@ -2,7 +2,6 @@ from typing import Any
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from quiz_attempter_management.models import QuizAttempter
 
 
 class UserIdentificatonMiddlewere:
@@ -17,11 +16,5 @@ class UserIdentificatonMiddlewere:
         return response
     
     
-    # def process_view(self, request, *args, **kwargs): 
-    #     user = QuizAttempter.objects.get(username=request.user.username)
-    #     print(request.path)
-    #     if  user.is_authenticated and user.is_quiz_attempter:
-    #         return redirect(reverse('login'))
-    #     else:
-    #         return None
-    
+    def process_view(self, request):
+        pass
