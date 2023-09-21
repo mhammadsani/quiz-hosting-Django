@@ -48,7 +48,8 @@ def user_login(request):
             #         return redirect('quiz_attempter_dashboard')
                 try:
                     if temp_user:=QuizAttempter.objects.get(username=username):
-                        quiz = Quiz.objects.get(pk=temp_user.quiz_id.id)
+                        if temp_user.is_first_time_login:
+                            return redirect('/changepassword/')
                         if temp_user.is_quiz_attempter:
                             return redirect('/quiz_attempter_homepage/')
                 except Exception as err:
@@ -81,6 +82,16 @@ def change_password(request):
         updated_credentials = PasswordChangeForm(user=request.user, data=request.POST)
         if updated_credentials.is_valid():
             updated_credentials.save()
+            try:
+                print(dir(request.user))
+                print(request.user.username)
+                user = QuizAttempter.objects.get(username=request.user.username)
+                if user.is_quiz_attempter:
+                    user.is_first_time_login = False
+                    user.save()
+            except Exception as e:
+                print(Exception)
+                return HttpResponseRedirect('/quiz_attempter_homepage/')
             return HttpResponseRedirect('/profile/')
         else:
             change_password_form = updated_credentials

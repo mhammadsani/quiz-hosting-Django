@@ -2,16 +2,29 @@
 
 {% block title %}
     <title> Announcement </title>
+    <head>
+        <style>
+            .announcement{
+                border: 2px solid black;
+                margin-bottom: 5px;
+            }
+            span{
+                color: red;
+            }
+        </style>
+    </head>
 {% endblock title %}
 
 {% block content %}
     {% if announcements %}
         {% for announcement in announcements %}
-            <h3> {{ announcement.subject }} </h3>
-            <hr>
-            <h4>{{announcement.details}}</h4>
+            <div class="announcement">
+               <span>Subject: </span> <h3> {{ announcement.subject }} </h3>
+                <span>Details: </span><h4>{{announcement.details}}</h4>
+            </div>
         {% endfor %}
     {% else %}
     <h2>There are no announcements </h2>
     {% endif %}
+    <a href="{% url "showquizzes" %}">Show Quizzes</a>
 {% endblock content %}

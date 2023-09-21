@@ -41,17 +41,21 @@ def start_discussion(request, quiz_id):
             discussion_form = DiscussionForm()
     else:
         discussion_form = DiscussionForm()
-    return render(request, 'quiz_attempter_management/start_discussion.html' , {'discussion_form': discussion_form})
+    return render(request, 'quiz_attempter_management/start_discussion.html' , {'discussion_form': discussion_form,
+                                                                                'quiz_id': quiz_id})
 
 
 def view_discussions(request, quiz_id):
     discussions = Discussion.objects.filter(quiz=quiz_id)
     
-    return render(request, 'quiz_attempter_management/view_discussion.html', {"discussions": discussions})
+    return render(request, 'quiz_attempter_management/view_discussion.html', {"discussions": discussions, 
+                                                                              'quiz_id': quiz_id})
 
 
 def full_discussion(request, discussion_id):
     discussion = Discussion.objects.get(id=discussion_id)
+    quiz_id = discussion.quiz.id
+    print(quiz_id)
     if request.method == "POST":
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
@@ -64,7 +68,8 @@ def full_discussion(request, discussion_id):
     quizAttempter = QuizAttempter.objects.get(id=discussion.quiz_attempter.id)
     comments = Comment.objects.filter(discussion=discussion)
     comment_form = CommentForm()
-    return render(request, 'quiz_attempter_management/full_discussion.html', {'discussion': discussion, 'comments': comments, 'author': quizAttempter.username, 'comment_form': comment_form})
+    return render(request, 'quiz_attempter_management/full_discussion.html', {'discussion': discussion, 'comments': comments, 'author': quizAttempter.username, 'comment_form': comment_form,
+                                                                              'quiz_id': quiz_id})
 
 def save_marks(quiz_attempter):
     answers = Answer.objects.filter(quiz_attempter=quiz_attempter)
@@ -128,19 +133,3 @@ def marks(request):
     marks = Mark.objects.get(quiz_attempter=request.user.id).marks
     print(marks)
     return render(request, 'quiz_attempter_management/marks.html', {'mcq_marks': marks})
-"""
-{"question_title": "What is OS?", "answers": [{"option1": "subject", "is_correct_answer": false}, {"option2": "a way to interact with hardware", "is_correct_answer": false}, {"option3": "operating system", "is_correct_answer": false}, {"option4": "all", "is_correct_answer": true}]}
-1
-False
-"""
-
-"""
-{'question_title': 'What is OS?', 'type': 'mcq', 
-'answers': [{'option1': 'subject', 'is_correct_answer': False}, 
-{'option2': 'core of computer science', 'is_correct_answer': False}, 
-{'option3': 'operating system', 'is_correct_answer': False}, 
-{'option4': 'all', 'is_correct_answer': True}]}
-
-{'question_title': 'What is OS?', 'type': 'subjective', 
-'answers': 'Operating System is a software that helps you communicate with the hardware in an easy manner.'}
-"""

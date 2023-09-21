@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User
 
 
 class Quiz(models.Model):
@@ -28,6 +28,7 @@ class Question(models.Model):
 class QuizAttempter(User):
     quiz_id = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     is_quiz_attempter = models.BooleanField(default=True, null=True)
+    is_first_time_login = models.BooleanField(default=True)
     
     def __str__(self) -> str:
         return "Quiz Attempter " + str(self.id)

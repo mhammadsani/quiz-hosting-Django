@@ -3,11 +3,12 @@ import string
 
 
 def generate_password(length=16):
-    characters = string.ascii_letters + string.digits
-    password = ""
-    for _ in range(length):
-        random_number = random.randint(0, len(characters) - 1)
-        password += characters[random_number]
+    # characters = string.ascii_letters + string.digits
+    # password = ""
+    # for _ in range(length):
+    #     random_number = random.randint(0, len(characters) - 1)
+    #     password += characters[random_number]
+    password = "namal123"
     return password
 
 def generate_username(email):

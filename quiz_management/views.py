@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from quiz_attempter_management.models import Mark
 from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm
 from .models import QuizAttempter, Quiz, Question, Announcement
 from .utils import generate_password, generate_username
@@ -179,7 +180,7 @@ def add_quiz_attempter(request, quiz_id):
     else:       
         quiz_attempter_form = QuizAttempterForm()
     quiz_attempters = QuizAttempter.objects.filter(pk=quiz_id)
-    print(quiz_attempters)
+    # print(quiz_attempters)
     return render(request, 'quiz_management/add_quiz_attempter.html', {'quiz_attempter_form': quiz_attempter_form,
                                                                        'quiz_attempters': quiz_attempters
                                                                        })
@@ -202,5 +203,6 @@ def add_announcement(request, quiz_id):
     return render(request, 'quiz_management/announcement.html', {'announcement_form': announcement_form})
 
 
-def generate_report(request):
-    pass
+def generate_report(request, quiz_id):
+    marks = Mark.objects.filter(quiz_id=quiz_id)
+    return render(request, 'quiz_management/report.html', {'marks': marks})

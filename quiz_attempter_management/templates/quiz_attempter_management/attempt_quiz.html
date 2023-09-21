@@ -37,6 +37,7 @@
                 </div>
             </form>
     {% else %}
-    <a href="{% url "marks" %}"> See Marks </a>
+    <h3>No questions Added in Quiz yet By Quiz Host</h3>
+    {% comment %} <a href="{% url "marks" %}"> See Marks </a> {% endcomment %}
     {% endif %}
 {% endblock content %}

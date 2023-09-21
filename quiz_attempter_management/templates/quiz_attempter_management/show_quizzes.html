@@ -26,6 +26,7 @@
 {% endblock title %}
 
 {% block content %}
+{% if quiz %}
     <table>
         <thead>
             <tr>
@@ -48,6 +49,10 @@
             </tr>
         </tbody>
     </table>
+{% else %}
+<h3>No Quiz Yet</h3>
+{% endif %}
+<a href="{% url "quiz_attempter_homepage" %}">Homepage</a>
 </body>
 </html>
 

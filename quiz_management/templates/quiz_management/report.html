@@ -1,0 +1,16 @@
+{% extends "authentication_system.html" %}
+
+{% block title %}
+    <title>Report</title>
+{% endblock title %}
+
+{% block content %}
+    {% if marks %}
+        {% for mark in marks %}
+            {{ mark.quiz_attempter.username }} {{ mark.marks }} <br>
+        {% endfor %}
+    {% else %}
+        <h2>Nobody Attempted the quiz yet</h2>
+    {% endif %}
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+{% endblock content %}

@@ -26,24 +26,32 @@
 {% endblock title %}
 
 {% block content %}
-    <table>
-        <thead>
-            <tr>
-                <th>Disucssion Subject</th>
-                <th> Disucssion Details </th>
-                <th> Disucssion Owner </th>
-                <th> See Details </th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for discussion in discussions %}
+    {% if discussions %}
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ discussion.subject }}</td> 
-                    <td>{{ discussion.details }}</td> 
-                    <td>{{ discussion.quiz_attempter.username }}</td> 
-                    <td> <a href="{% url "fulldiscussion" discussion.id %}"> Click Here </a> </td>
+                    <th>Disucssion Subject</th>
+                    <th> Disucssion Details </th>
+                    <th> Disucssion Owner </th>
+                    <th> See Details </th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for discussion in discussions %}
+                    <tr>
+                        <td>{{ discussion.subject }}</td> 
+                        <td>{{ discussion.details }}</td> 
+                        <td>{{ discussion.quiz_attempter.username }}</td> 
+                        <td> <a href="{% url "fulldiscussion" discussion.id %}"> Click Here </a> </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <h3>No discussions has been initiated yet</h3>
+    {% endif %}
+    <a href="{% url "showquizzes" %}">Show Quizzes</a> <br>
+    <a href="{% url "discussion" quiz_id %}">Discussion Details</a>
+
+
 {% endblock content %}
