@@ -12,4 +12,5 @@ urlpatterns = [
     path('add_announcement/<int:quiz_id>/', views.add_announcement, name="announcement"),
     path('add_question/<int:quiz_id>/', views.add_questions, name='addquestion'),
     path('question/<int:quiz_id>/<str:type>/', views.queston, name="questiontype"),
+    # path('generate_report/<quiz_id>', views.generate_report, 'generatereport')
 ]

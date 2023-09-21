@@ -1,7 +1,7 @@
 {% extends "authentication_system.html" %}
 
 {% block title %}
-    <title>Quizzes</title>
+    <title>Show Discussion</title>
     <head>
         <style>
             table {
@@ -29,26 +29,21 @@
     <table>
         <thead>
             <tr>
-                <th>Quiz Title</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Announcement</th>
-                <th>Attempt</th>
-                <th>Discussion</th>
+                <th>Disucssion Subject</th>
+                <th> Disucssion Details </th>
+                <th> Disucssion Owner </th>
+                <th> See Details </th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>{{quiz.title}}</td>
-                <td>{{quiz.start_time}}</td>
-                <td>{{quiz.end_time}}</td>
-                <td><a href="{% url "announcements" quiz.id %}"> Announcements </a></td>
-                <td><a href="{% url "attemptquiz" quiz.id %}">Attempt</a></td>
-                <td><a href="{% url "discussion" quiz.id%}">Discussion</a></td>
-            </tr>
+            {% for discussion in discussions %}
+                <tr>
+                    <td>{{ discussion.subject }}</td> 
+                    <td>{{ discussion.details }}</td> 
+                    <td>{{ discussion.quiz_attempter.username }}</td> 
+                    <td> <a href="{% url "fulldiscussion" discussion.id %}"> Click Here </a> </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
-
 {% endblock content %}

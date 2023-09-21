@@ -48,11 +48,9 @@ def approve_host(in_active_hosts):
     all_hosts = User.objects.all()
     for host in all_hosts:
         if host.username in in_active_hosts:
-            print('working')
             host.is_active = True
             host.save()
     
-
 
 def host_management(request):
     if request.user.is_authenticated and request.user.is_superuser:
@@ -202,3 +200,7 @@ def add_announcement(request, quiz_id):
     else:
         announcement_form = AnnouncementForm()
     return render(request, 'quiz_management/announcement.html', {'announcement_form': announcement_form})
+
+
+def generate_report(request):
+    pass

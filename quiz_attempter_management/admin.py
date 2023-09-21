@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Answer, Mark
+from .models import Answer, Mark, Discussion, Comment
 
 
 # Register your models here.
@@ -11,3 +11,14 @@ class AnswerAdmin(admin.ModelAdmin):
 @admin.register(Mark)
 class MarkAdmin(admin.ModelAdmin):
     list_display = ['quiz_attempter', 'quiz_id', 'marks']
+    
+
+@admin.register(Discussion)
+class DiscussionAdmin(admin.ModelAdmin):
+    list_display = ['quiz_attempter', 'quiz', 'subject', 'details']   
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id', 'discussion', 'comment', 'commenter']
+    

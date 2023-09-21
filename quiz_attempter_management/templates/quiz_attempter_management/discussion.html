@@ -1,0 +1,10 @@
+{% extends "authentication_system.html" %}
+
+{% block title %}
+    <title> Discussion </title>
+{% endblock title %}
+
+{% block content %}
+    <a href="{% url "startdiscussion" quiz_id %}">Start Discussion</a> <br> <br>
+    <a href="{% url "viewdiscussions" quiz_id %}">View Discussions</a>
+{% endblock content %}

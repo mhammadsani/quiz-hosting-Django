@@ -1,8 +1,10 @@
 import json
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.models import User
+from .forms import DiscussionForm, CommentForm
 from quiz_management.models import Question, QuizAttempter, Announcement, Quiz
-from quiz_attempter_management.models import Answer, Mark
+from quiz_attempter_management.models import Answer, Mark, Discussion, Comment
 
 
 def quiz_attempter_homepage(request):
@@ -21,6 +23,48 @@ def show_announcements(request, quiz_id):
         print(announcement.details)
     return render(request, 'quiz_attempter_management/announcements.html', {'announcements': announcements})
 
+
+def discussion_details(request, quiz_id):
+    return render(request, 'quiz_attempter_management/discussion.html', {'quiz_id': quiz_id})
+
+
+def start_discussion(request, quiz_id):
+    if request.method == "POST":
+        discussion_form = DiscussionForm(request.POST)
+        if discussion_form.is_valid():
+            subject = discussion_form.cleaned_data['subject']
+            details = discussion_form.cleaned_data['details']
+            quiz_attempter = QuizAttempter.objects.get(pk=request.user.id)
+            quiz = Quiz.objects.get(id=quiz_id)
+            discussion = Discussion(subject=subject, details=details, quiz_attempter=quiz_attempter, quiz=quiz)
+            discussion.save()
+            discussion_form = DiscussionForm()
+    else:
+        discussion_form = DiscussionForm()
+    return render(request, 'quiz_attempter_management/start_discussion.html' , {'discussion_form': discussion_form})
+
+
+def view_discussions(request, quiz_id):
+    discussions = Discussion.objects.filter(quiz=quiz_id)
+    
+    return render(request, 'quiz_attempter_management/view_discussion.html', {"discussions": discussions})
+
+
+def full_discussion(request, discussion_id):
+    discussion = Discussion.objects.get(id=discussion_id)
+    if request.method == "POST":
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            user_comment = comment_form.cleaned_data['comment']
+            user = User.objects.get(username=request.user.username)
+            comment = Comment(comment=user_comment, discussion=discussion, commenter=user)
+            comment.save()
+            comment_form = CommentForm()
+
+    quizAttempter = QuizAttempter.objects.get(id=discussion.quiz_attempter.id)
+    comments = Comment.objects.filter(discussion=discussion)
+    comment_form = CommentForm()
+    return render(request, 'quiz_attempter_management/full_discussion.html', {'discussion': discussion, 'comments': comments, 'author': quizAttempter.username, 'comment_form': comment_form})
 
 def save_marks(quiz_attempter):
     answers = Answer.objects.filter(quiz_attempter=quiz_attempter)

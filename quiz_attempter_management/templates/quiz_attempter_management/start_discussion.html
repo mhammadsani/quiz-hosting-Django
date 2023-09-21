@@ -1,0 +1,17 @@
+{% extends "authentication_system.html" %}
+
+
+{% block title %}
+    <title>Start Discussion</title>
+{% endblock title %}
+
+{% block content %}
+    <form action="" method="POST" novalidate>
+        {% csrf_token %}
+        {% for form_info in discussion_form %}
+            {{ form_info.label_tag }} {{ form_info }} {{ form_info.errors }}  <br> <br>
+        {% endfor %}
+        <input type="submit" value="start">
+    </form>
+{% endblock content %}
+    
