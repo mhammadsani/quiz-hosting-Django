@@ -26,12 +26,15 @@ class Question(models.Model):
     
     
 class QuizAttempter(User):
-    quiz_id = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    quiz_id = models.ManyToManyField(Quiz)
     is_quiz_attempter = models.BooleanField(default=True, null=True)
     is_first_time_login = models.BooleanField(default=True)
     
     def __str__(self) -> str:
         return "Quiz Attempter " + str(self.id)
+    
+    class Meta:
+        db_table = "Quiz Attempter"
     
 class Announcement(models.Model):
     host = models.ForeignKey(User, on_delete=models.CASCADE)

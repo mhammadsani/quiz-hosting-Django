@@ -12,8 +12,9 @@ def quiz_attempter_homepage(request):
 
 
 def show_quizzes(request):
-    quiz = QuizAttempter.objects.get(id=request.user.id).quiz_id
-    return render(request, 'quiz_attempter_management/show_quizzes.html', {'quiz': quiz})
+    quiz_attempter = QuizAttempter.objects.get(id=request.user.id)
+    quizzes = quiz_attempter.quiz_id.all()
+    return render(request, 'quiz_attempter_management/show_quizzes.html', {'quizzes': quizzes})
 
 
 def show_announcements(request, quiz_id):
@@ -73,7 +74,6 @@ def full_discussion(request, discussion_id):
 
 def save_marks(quiz_attempter):
     answers = Answer.objects.filter(quiz_attempter=quiz_attempter)
-    print(answers)
     mcq_marks = 0
     mcq_total_marks = 0
     for answer in answers:
@@ -87,7 +87,11 @@ def save_marks(quiz_attempter):
                 if option[key] == user_answer and option['is_correct_answer']:
                     mcq_marks += question.marks
                     mcq_total_marks += question.marks
-    mark = Mark(quiz_attempter=quiz_attempter, marks=mcq_marks, quiz=quiz_attempter.quiz_id)
+
+    quiz_attempter = QuizAttempter.objects.get(pk=quiz_attempter)
+    quizzes = quiz_attempter.quiz_id.all()
+    
+    mark = Mark(quiz_attempter=quiz_attempter, marks=mcq_marks, quiz=quiz)
     mark.save()
 
 

@@ -26,7 +26,7 @@
 {% endblock title %}
 
 {% block content %}
-{% if quiz %}
+{% if quizzes %}
     <table>
         <thead>
             <tr>
@@ -39,14 +39,16 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>{{quiz.title}}</td>
-                <td>{{quiz.start_time}}</td>
-                <td>{{quiz.end_time}}</td>
-                <td><a href="{% url "announcements" quiz.id %}"> Announcements </a></td>
-                <td><a href="{% url "attemptquiz" quiz.id %}">Attempt</a></td>
-                <td><a href="{% url "discussion" quiz.id%}">Discussion</a></td>
-            </tr>
+            {% for quiz in quizzes %}
+                <tr>
+                    <td>{{quiz.title}}</td>
+                    <td>{{quiz.start_time}}</td>
+                    <td>{{quiz.end_time}}</td>
+                    <td><a href="{% url "announcements" quiz.id %}"> Announcements </a></td>
+                    <td><a href="{% url "attemptquiz" quiz.id %}">Attempt</a></td>
+                    <td><a href="{% url "discussion" quiz.id%}">Discussion</a></td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 {% else %}

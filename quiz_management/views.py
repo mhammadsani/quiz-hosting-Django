@@ -129,7 +129,7 @@ def queston(request, quiz_id, type):
                 question.quiz.add(quiz)
                 question.save()
                 messages.success(request, "MCQ added successfully!")
-                return HttpResponseRedirect('/quiz_management/question/1/mcq/')
+                return HttpResponseRedirect(f'/quiz_management/question/{quiz_id}/mcq/')
             
             return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
                                                                         'question_type': type,
@@ -169,14 +169,23 @@ def add_quiz_attempter(request, quiz_id):
         if quiz_attempter_form.is_valid():
             email = quiz_attempter_form.cleaned_data['email']
             username = generate_username(email)
-            password = generate_password()
-            print(username, password)
-            quiz = Quiz.objects.get(pk=quiz_id)
-            quiz_attempter = QuizAttempter.objects.create(username=username, email=email, quiz_id=quiz)
-            quiz_attempter.set_password(password)
-            quiz_attempter.save()
-            messages.success(request, "Quiz Attempter Added for the quiz")
-            quiz_attempter_form = QuizAttempterForm()
+            try:
+                quiz_attempter = QuizAttempter.objects.get(username=username)
+                if quiz_attempter:
+                    quiz = Quiz.objects.get(pk=quiz_id)
+                    quiz_attempter.quiz_id.add(quiz)
+                    quiz_attempter_form = QuizAttempterForm()
+            except Exception as err:
+                print(err)
+                password = generate_password()
+                print(username, password)
+                quiz = Quiz.objects.get(pk=quiz_id)
+                quiz_attempter = QuizAttempter.objects.create(username=username, email=email)
+                quiz_attempter.quiz_id.add(quiz)
+                quiz_attempter.set_password(password)
+                quiz_attempter.save()
+                messages.success(request, "Quiz Attempter Added for the quiz")
+                quiz_attempter_form = QuizAttempterForm()
     else:       
         quiz_attempter_form = QuizAttempterForm()
     quiz_attempters = QuizAttempter.objects.filter(pk=quiz_id)
