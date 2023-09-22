@@ -1,4 +1,4 @@
-from quiz_hosting_web_app.password import PASSWORD
+from .password import PASSWORD
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
