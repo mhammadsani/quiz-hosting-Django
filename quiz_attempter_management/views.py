@@ -89,7 +89,8 @@ def save_marks(quiz_attempter):
                     mcq_total_marks += question.marks
 
     quiz_attempter = QuizAttempter.objects.get(pk=quiz_attempter)
-    quizzes = quiz_attempter.quiz_id.all()
+    quizzes = quiz_attempter.quiz_id.get()
+    print(quizzes)
     
     mark = Mark(quiz_attempter=quiz_attempter, marks=mcq_marks, quiz=quiz)
     mark.save()
