@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quiz, QuizAttempter, Question, Announcement
+from .models import Quiz, QuizAttempter, Question, Announcement, QuizAndQuizAttempter, QuizAndQuestion
 
 
 @admin.register(Quiz)
@@ -9,19 +9,24 @@ class QuizAdmin(admin.ModelAdmin):
 
 @admin.register(QuizAttempter)
 class QuizAttempterAdmin(admin.ModelAdmin):
-    list_display = ['username', 'password']
+    list_display = ['id','username', 'password']
     
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ['id', 'question_details', 'is_public', 'marks']
-    
-    # class Question(models.Model):
-    # quiz = models.ManyToManyField(Quiz)
-    # question = models.JSONField()
-    # is_public = models.BooleanField(default=False)
-    # question_marks = models.IntegerField(default=1)
+
 
 @admin.register(Announcement)
 class AnnoucementAdmin(admin.ModelAdmin):
-    list_display = ['host', 'quiz', 'subject', 'details']
+    list_display = ['id', 'host', 'quiz', 'subject', 'details']
+    
+    
+@admin.register(QuizAndQuizAttempter)
+class QuizAndQuizAttempterAdmin(admin.ModelAdmin):
+    list_display = ['id', 'quiz_attempter', 'quiz', 'is_attempted']
+    
+
+@admin.register(QuizAndQuestion)
+class QuizAndQuestionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'quiz', 'question', 'quiz_attempter', 'answer']

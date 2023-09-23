@@ -13,20 +13,10 @@ class Quiz(models.Model):
  
     def __str__(self) -> str:
         return self.title
-    
-
-class Question(models.Model):
-    quiz = models.ManyToManyField(Quiz)
-    question_details = models.JSONField()
-    is_public = models.BooleanField(default=False)
-    marks = models.IntegerField(default=1)
-    
-    def __str__(self) -> str:
-        return "Question " + str(self.id)
-    
-    
+   
+   
 class QuizAttempter(User):
-    quiz_id = models.ManyToManyField(Quiz)
+    quiz_id = models.ManyToManyField(Quiz, through="QuizAndQuizAttempter")
     is_quiz_attempter = models.BooleanField(default=True, null=True)
     is_first_time_login = models.BooleanField(default=True)
     
@@ -35,6 +25,32 @@ class QuizAttempter(User):
     
     class Meta:
         db_table = "Quiz Attempter"
+         
+
+class Question(models.Model):
+    quiz = models.ManyToManyField(Quiz, through="QuizAndQuestion")
+    question_details = models.JSONField()
+    is_public = models.BooleanField(default=False)
+    marks = models.IntegerField(default=1)
+    
+    def __str__(self) -> str:
+        return "Question " + str(self.id)
+    
+    
+class QuizAndQuestion(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    quiz_attempter = models.ForeignKey(QuizAttempter, on_delete=models.CASCADE)
+    answer = models.CharField(max_length=120)
+    
+    
+    
+          
+class QuizAndQuizAttempter(models.Model):
+    quiz_attempter = models.ForeignKey(QuizAttempter, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    is_attempted = models.BooleanField(default=False)
+    
     
 class Announcement(models.Model):
     host = models.ForeignKey(User, on_delete=models.CASCADE)

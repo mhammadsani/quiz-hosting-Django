@@ -6,7 +6,12 @@
     <title>Marks</title>
 </head>
 <body>
-    <a href="{% url "marks"%}">See Marks</a>
-    {{ mcq_marks }}
+    {% if total_marks %}
+        {{ obtained_marks }} / {{ total_marks}}
+    {% else %}
+        <h3>Quiz not attempted Yet!</h3>
+        <a href="{% url "attemptquiz" quiz_id %}"></a>
+    {% endif %}
+    <a href="{% url "showquizzes" %}">Show Quizzes</a>
 </body>
 </html>

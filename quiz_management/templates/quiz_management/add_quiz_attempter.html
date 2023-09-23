@@ -11,9 +11,9 @@
         <input type="submit" value="Add">
     </form>
     <br> <br>
-    {% for quiz_attempter in quiz_attempters %}
+    {% comment %} {% for quiz_attempter in quiz_attempters %}
         {{ quiz_attempter.username }} || {{ quiz_attempter.email }}
-    {% endfor %}
+    {% endfor %} {% endcomment %}
     <br> <br>
     {% if messages %}
         {% for message in messages %}

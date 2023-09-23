@@ -45,7 +45,7 @@
                     <td>{{quiz.start_time}}</td>
                     <td>{{quiz.end_time}}</td>
                     <td><a href="{% url "announcements" quiz.id %}"> Announcements </a></td>
-                    <td><a href="{% url "attemptquiz" quiz.id %}">Attempt</a></td>
+                    <td><a href="{% url "attemptquiz" quiz.id %}">Attempt</a> /  <a href="{% url "marks" quiz.id %}">See Marks</a></td>
                     <td><a href="{% url "discussion" quiz.id%}">Discussion</a></td>
                 </tr>
             {% endfor %}

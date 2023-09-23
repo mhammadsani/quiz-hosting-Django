@@ -16,16 +16,16 @@
                     </h2>
                     {% if question.type == "mcq" %}
                         <label for="option1">
-                            <input type="radio" name="{{question.id}}" id="option1"  value={{ question.answers.0.option1 }} > {{ question.answers.0.option1 }} 
+                            <input type="radio" name="{{question.id}}" id="option1"  value="{{ question.answers.0.option1 }}" > {{ question.answers.0.option1 }} 
                         </label>
                         <label for="option2">
-                            <input type="radio" name="{{question.id}}" id="option2" value={{ question.answers.1.option2 }}> {{ question.answers.1.option2 }}
+                            <input type="radio" name="{{question.id}}" id="option2" value="{{ question.answers.1.option2 }}"> {{ question.answers.1.option2 }}
                         </label>
                         <label for="option3">
-                            <input type="radio" name="{{question.id}}" id="option3" value={{ question.answers.2.option3 }}> {{ question.answers.2.option3 }}
+                            <input type="radio" name="{{question.id}}" id="option3" value="{{ question.answers.2.option3 }}"> {{ question.answers.2.option3 }}
                         </label>
                         <label for="option4">
-                            <input type="radio" name="{{question.id}}" id="option4" value={{ question.answers.3.option4 }}> {{ question.answers.3.option4 }}
+                            <input type="radio" name="{{question.id}}" id="option4" value="{{ question.answers.3.option4 }}"> {{ question.answers.3.option4 }}
                         </label>
                     {% elif question.type == "subjective" %}
                         <input type="text" name="{{question.id}}" id="answer">

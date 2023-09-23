@@ -143,7 +143,7 @@ def queston(request, quiz_id, type):
                 question.quiz.add(quiz)
                 question.save()
                 messages.success(request, "Subjective Question Added Successfully!")
-                return HttpResponseRedirect('/quiz_management/question/2/subjective/')
+                return HttpResponseRedirect(f'/quiz_management/question/{quiz_id}/subjective/')
             
             return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
                                                                         'question_type': type,
