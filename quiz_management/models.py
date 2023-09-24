@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Quiz(models.Model):
@@ -7,14 +8,30 @@ class Quiz(models.Model):
     title = models.CharField(max_length=120)
     category = models.CharField(max_length=30, null=True, blank=True)
     is_quiz_attempted = models.BooleanField(default=False)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.DateTimeField(default=timezone.now)
+    end_time = models.DateTimeField(default=timezone.now)
 
  
     def __str__(self) -> str:
         return self.title
-   
-   
+    
+
+class Question(models.Model):
+    quiz = models.ManyToManyField(Quiz)
+    question_details = models.JSONField()
+    is_public = models.BooleanField(default=False)
+    marks = models.IntegerField(default=1)
+    
+    def __str__(self) -> str:
+        return "Question " + str(self.id)
+    
+# class QuizQuestion(models.Model):
+#     pass
+
+class QuizAttemptersExcel(models.Model):
+    file = models.FileField(upload_to='uploads/')    
+  
+  
 class QuizAttempter(User):
     quiz_id = models.ManyToManyField(Quiz, through="QuizAndQuizAttempter")
     is_quiz_attempter = models.BooleanField(default=True, null=True)
@@ -25,27 +42,8 @@ class QuizAttempter(User):
     
     class Meta:
         db_table = "Quiz Attempter"
-         
-
-class Question(models.Model):
-    quiz = models.ManyToManyField(Quiz, through="QuizAndQuestion")
-    question_details = models.JSONField()
-    is_public = models.BooleanField(default=False)
-    marks = models.IntegerField(default=1)
-    
-    def __str__(self) -> str:
-        return "Question " + str(self.id)
-    
-    
-class QuizAndQuestion(models.Model):
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    quiz_attempter = models.ForeignKey(QuizAttempter, on_delete=models.CASCADE)
-    answer = models.CharField(max_length=120)
-    
-    
-    
-          
+        
+        
 class QuizAndQuizAttempter(models.Model):
     quiz_attempter = models.ForeignKey(QuizAttempter, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)

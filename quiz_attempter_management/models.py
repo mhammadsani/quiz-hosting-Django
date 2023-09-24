@@ -14,7 +14,7 @@ class Mark(models.Model):
     marks = models.IntegerField()
     total_mark = models.IntegerField()
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    quiz_attempter = models.OneToOneField(QuizAttempter, on_delete=models.CASCADE)
+    quiz_attempter = models.ForeignKey(QuizAttempter, on_delete=models.CASCADE)
     
 
 class Discussion(models.Model):

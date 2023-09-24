@@ -5,12 +5,21 @@
 {% endblock title %}
 
 {% block content %}
+    {% if is_quiz_attempted %}
     {% if marks %}
-        {% for mark in marks %}
-            {{ mark.quiz_attempter.username }} {{ mark.marks }} <br>
-        {% endfor %}
-    {% else %}
-        <h2>Nobody Attempted the quiz yet</h2>
+        <h3>One's who has attempted</h3>
+            {% for mark in marks %}
+                {{ mark.quiz_attempter.username }} {{ mark.marks }} <br>
+            {% endfor %}
+        {% endif %}
+        {% if non_attempters %}
+        <h3>One's who has not attempted </h3>
+            {% for non_attempter in non_attempters %}
+                {{ non_attempter}}
+            {% endfor %}
+        {% endif %}
+        {% else %}
+            <h3> Report cannot be generated yet as there is time left </h3>
     {% endif %}
     <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
 {% endblock content %}

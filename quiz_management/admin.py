@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Quiz, QuizAttempter, Question, Announcement, QuizAndQuizAttempter, QuizAndQuestion
+from .models import Quiz, QuizAttempter, Question, Announcement, QuizAndQuizAttempter
 
 
 @admin.register(Quiz)
@@ -26,7 +26,3 @@ class AnnoucementAdmin(admin.ModelAdmin):
 class QuizAndQuizAttempterAdmin(admin.ModelAdmin):
     list_display = ['id', 'quiz_attempter', 'quiz', 'is_attempted']
     
-
-@admin.register(QuizAndQuestion)
-class QuizAndQuestionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'quiz', 'question', 'quiz_attempter', 'answer']

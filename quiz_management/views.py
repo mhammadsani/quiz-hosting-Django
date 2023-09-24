@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from quiz_attempter_management.models import Mark
 from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm
-from .models import QuizAttempter, Quiz, Question, Announcement
+from .models import QuizAttempter, Quiz, Question, Announcement, QuizAndQuizAttempter
 from .utils import generate_password, generate_username
 
 
@@ -213,5 +213,14 @@ def add_announcement(request, quiz_id):
 
 
 def generate_report(request, quiz_id):
+    quiz = Quiz.objects.get(id=quiz_id)
     marks = Mark.objects.filter(quiz_id=quiz_id)
-    return render(request, 'quiz_management/report.html', {'marks': marks})
+    quiz_attempters = QuizAndQuizAttempter.objects.filter(quiz=quiz_id)
+    non_attempters = []
+    for quiz_attempter in quiz_attempters:    
+        if not quiz_attempter.is_attempted:
+            non_attempters.append(
+                quiz_attempter.quiz_attempter.username
+            )
+    print(non_attempters)
+    return render(request, 'quiz_management/report.html', {'marks': marks, 'non_attempters': non_attempters, 'is_quiz_attempted': quiz.is_quiz_attempted})

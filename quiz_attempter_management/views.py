@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from .forms import DiscussionForm, CommentForm
 from quiz_management.models import Question, QuizAttempter, Announcement, Quiz, QuizAndQuizAttempter
 from quiz_attempter_management.models import Answer, Mark, Discussion, Comment
+from datetime import datetime
+from django.utils import timezone
+
+
 
 
 def quiz_attempter_homepage(request):
@@ -15,6 +19,16 @@ def quiz_attempter_homepage(request):
 def show_quizzes(request):
     quiz_attempter = QuizAttempter.objects.get(id=request.user.id)
     quizzes = quiz_attempter.quiz_id.all()
+    available_quizzes = []
+    current_time = timezone.now()
+    for quiz in quizzes:
+        if current_time >= quiz.start_time and current_time <= quiz.end_time:
+            available_quizzes.append(quiz)
+        else:
+            print("working", quiz.is_quiz_attempted)
+            quiz.is_quiz_attempted = True
+            quiz.save()
+    print(available_quizzes)
     return render(request, 'quiz_attempter_management/show_quizzes.html', {'quizzes': quizzes})
 
 
@@ -101,6 +115,14 @@ def is_quiz_attemptted(user, quiz_id):
     return QuizAndQuizAttempter.objects.get(Q(quiz_attempter=user) & Q(quiz=quiz_id)).is_attempted
 
 
+# def is_quiz_attemptted(user, quiz_id):
+#     marks = Mark.objects.all()
+#     for mark in marks:
+#         if mark.quiz_attempter.id == user and mark.quiz_id == int(quiz_id):
+#             return True
+#     return False
+
+
 def attempt_quiz(request, quiz_id):
     is_quiz_attempter_by_user = is_quiz_attemptted(request.user, quiz_id)
     if is_quiz_attempter_by_user:
@@ -138,14 +160,7 @@ def attempt_quiz(request, quiz_id):
 
 
 def marks(request, quiz_id):
-    marks = Mark.objects.filter(quiz_id=quiz_id)
-    obtained_marks = 0
-    total_marks = 0
-    for quiz_attempter in marks:
-        print("Request.user.id",request.user.id)
-        print("Quiz attempter",quiz_attempter.quiz_attempter.id)
-        if quiz_attempter.quiz_attempter.id == request.user.id:
-            marks = Mark.objects.get(quiz_attempter=request.user.id)
-            obtained_marks = marks.marks
-            total_marks = marks.total_mark
+    marks = Mark.objects.get(Q(quiz_id=quiz_id) & Q(quiz_attempter=request.user.id))
+    obtained_marks = marks.marks
+    total_marks = marks.total_mark
     return render(request, 'quiz_attempter_management/marks.html', {'obtained_marks': obtained_marks, 'total_marks': total_marks, 'quiz_id': quiz_id})
