@@ -52,6 +52,20 @@ class SubjectiveQuestionForm(forms.Form):
     marks = forms.DecimalField(label="Marks")
     is_public = forms.BooleanField(required=False)
     
+    
+class BoolQuestionForm(forms.Form):
+    title = forms.CharField(label="Question Title", max_length=200)
+    option_1 = forms.BooleanField(label='Option 1')
+    option_2 = forms.BooleanField(label='Option 2')
+    answer = forms.ChoiceField(
+        label='Correct Answer',
+        choices={
+            ('option1', 'Option 1'),
+            ('option2', 'Option 2'),
+        }
+    )
+    marks = forms.DecimalField(label="Marks")
+    is_public = forms.BooleanField(required=False)
 
 # class BooleanQuestionForm(forms.Form):
 #     title = forms.CharField(label="Queston Title", max_length=200)
@@ -67,7 +81,4 @@ class AnnouncementForm(forms.ModelForm):
     class Meta:
         model = Announcement
         fields = ['subject', 'details']
-        # widget = {
-        #     'preparation_material': forms.FileField(required=False)
-        # }
         

@@ -1,4 +1,4 @@
-{% extends "authentication_system.html" %}
+{% extends "base.html" %}
 
 {% block title %}
     <title>Full Discussion</title>
@@ -38,5 +38,10 @@
         <input type="submit" value="comment">
     </form>
     <br>
-    <a href="{% url "discussion" quiz_id%}">Discussions</a>
+    {% if is_quiz_attempter %}
+        <a href="{% url "discussion" quiz_id%}">Discussions</a>
+    {% else %}
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+    <a href="{% url "viewdiscussions" quiz_id%}">View Discussion</a>
+    {% endif %}
 {% endblock content %}

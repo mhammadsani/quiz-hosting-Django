@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from django.utils import timezone
 
 
@@ -25,13 +25,11 @@ class Question(models.Model):
     def __str__(self) -> str:
         return "Question " + str(self.id)
     
-# class QuizQuestion(models.Model):
-#     pass
 
 class QuizAttemptersExcel(models.Model):
     file = models.FileField(upload_to='uploads/')    
-  
-  
+
+
 class QuizAttempter(User):
     quiz_id = models.ManyToManyField(Quiz, through="QuizAndQuizAttempter")
     is_quiz_attempter = models.BooleanField(default=True, null=True)
@@ -55,5 +53,4 @@ class Announcement(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     subject = models.CharField(max_length=200)
     details = models.TextField()
-    # preparation_material = models.FileField(blank=True)
     

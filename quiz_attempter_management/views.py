@@ -1,22 +1,29 @@
 import json
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from django.db.models import Q
 from django.contrib.auth.models import User
-from .forms import DiscussionForm, CommentForm
-from quiz_management.models import Question, QuizAttempter, Announcement, Quiz, QuizAndQuizAttempter
-from quiz_attempter_management.models import Answer, Mark, Discussion, Comment
-from datetime import datetime
+from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.utils import timezone
+from quiz_management.models import (
+    Question,
+    QuizAttempter,
+    Announcement,
+    Quiz,
+    QuizAndQuizAttempter,
+)
+from quiz_attempter_management.models import Answer, Mark, Discussion, Comment
+from .forms import DiscussionForm, CommentForm
+from .decorators import quiz_attempter_required, host_or_quiz_attempter_required
 
 
-
-
+@quiz_attempter_required
 def quiz_attempter_homepage(request):
     return render(request, 'quiz_attempter_management/profile.html')
 
 
+@quiz_attempter_required
 def show_quizzes(request):
+    print(dir(request))
     quiz_attempter = QuizAttempter.objects.get(id=request.user.id)
     quizzes = quiz_attempter.quiz_id.all()
     available_quizzes = []
@@ -25,22 +32,18 @@ def show_quizzes(request):
         if current_time >= quiz.start_time and current_time <= quiz.end_time:
             available_quizzes.append(quiz)
         else:
-            print("working", quiz.is_quiz_attempted)
             quiz.is_quiz_attempted = True
             quiz.save()
-    print(available_quizzes)
     return render(request, 'quiz_attempter_management/show_quizzes.html', {'quizzes': quizzes})
 
 
+@quiz_attempter_required
 def show_announcements(request, quiz_id):
     announcements = Announcement.objects.filter(quiz=quiz_id)
     return render(request, 'quiz_attempter_management/announcements.html', {'announcements': announcements})
 
 
-def discussion_details(request, quiz_id):
-    return render(request, 'quiz_attempter_management/discussion.html', {'quiz_id': quiz_id})
-
-
+@quiz_attempter_required
 def start_discussion(request, quiz_id):
     if request.method == "POST":
         discussion_form = DiscussionForm(request.POST)
@@ -58,17 +61,35 @@ def start_discussion(request, quiz_id):
                                                                                 'quiz_id': quiz_id})
 
 
+
+@host_or_quiz_attempter_required
+def discussion_details(request, quiz_id):
+    return render(request, 'quiz_attempter_management/discussion.html', {'quiz_id': quiz_id})
+
+
+
+def quiz_attempter(request):
+    try: 
+        request.user.quizattempter
+        is_quiz_attempter = True
+    except Exception:
+        is_quiz_attempter = False
+    return is_quiz_attempter
+
+
+@host_or_quiz_attempter_required
 def view_discussions(request, quiz_id):
+    is_quiz_attempter = quiz_attempter(request)
     discussions = Discussion.objects.filter(quiz=quiz_id)
-    
     return render(request, 'quiz_attempter_management/view_discussion.html', {"discussions": discussions, 
-                                                                              'quiz_id': quiz_id})
+                                                                              'quiz_id': quiz_id,
+                                                                              'is_quiz_attempter': is_quiz_attempter})
 
 
+@host_or_quiz_attempter_required
 def full_discussion(request, discussion_id):
     discussion = Discussion.objects.get(id=discussion_id)
     quiz_id = discussion.quiz.id
-    print(quiz_id)
     if request.method == "POST":
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
@@ -81,8 +102,10 @@ def full_discussion(request, discussion_id):
     quizAttempter = QuizAttempter.objects.get(id=discussion.quiz_attempter.id)
     comments = Comment.objects.filter(discussion=discussion)
     comment_form = CommentForm()
+    is_quiz_attempter = quiz_attempter(request)
     return render(request, 'quiz_attempter_management/full_discussion.html', {'discussion': discussion, 'comments': comments, 'author': quizAttempter.username, 'comment_form': comment_form,
-                                                                              'quiz_id': quiz_id})
+                                                                              'quiz_id': quiz_id,
+                                                                              'is_quiz_attempter': is_quiz_attempter})
 
 
 def save_marks(quiz_attempter, quiz_id, quiz):
@@ -96,7 +119,6 @@ def save_marks(quiz_attempter, quiz_id, quiz):
         total_marks += question.marks
         if question_details["type"] == "mcq":
             options = question_details["answers"]
-            print(options, type(options))
             for option_number, option in enumerate(options):
                 key = f'option{option_number+1}'
                 if option[key] == user_answer and option['is_correct_answer']:
@@ -115,14 +137,7 @@ def is_quiz_attemptted(user, quiz_id):
     return QuizAndQuizAttempter.objects.get(Q(quiz_attempter=user) & Q(quiz=quiz_id)).is_attempted
 
 
-# def is_quiz_attemptted(user, quiz_id):
-#     marks = Mark.objects.all()
-#     for mark in marks:
-#         if mark.quiz_attempter.id == user and mark.quiz_id == int(quiz_id):
-#             return True
-#     return False
-
-
+@quiz_attempter_required
 def attempt_quiz(request, quiz_id):
     is_quiz_attempter_by_user = is_quiz_attemptted(request.user, quiz_id)
     if is_quiz_attempter_by_user:
@@ -134,13 +149,11 @@ def attempt_quiz(request, quiz_id):
         quiz = Quiz.objects.get(id=quiz_id)
         for question in questions:
             answer = request.POST.get(str(question.id))
-            print(answer)
             user_answer = Answer(answer=answer, question=Question.objects.get(id=question.id), quiz_attempter=quiz_attempter, quiz=quiz)
             user_answer.save()
         test=QuizAndQuizAttempter.objects.get(Q(quiz_attempter=request.user) & Q(quiz=quiz_id))
         test.is_attempted = True
         test.save()
-        print("I am test ", test)
         save_marks(quiz_attempter, quiz_id, quiz)
         return HttpResponse("Quiz Attempted")
     else:
@@ -159,8 +172,13 @@ def attempt_quiz(request, quiz_id):
     return render(request, "quiz_attempter_management/attempt_quiz.html", {'final_questions': final_questions})
 
 
+@quiz_attempter_required
 def marks(request, quiz_id):
-    marks = Mark.objects.get(Q(quiz_id=quiz_id) & Q(quiz_attempter=request.user.id))
-    obtained_marks = marks.marks
-    total_marks = marks.total_mark
+    is_quiz_attemptted = QuizAndQuizAttempter.objects.get(Q(quiz_attempter=request.user) & Q(quiz=quiz_id)).is_attempted
+    if is_quiz_attemptted:
+        marks = Mark.objects.get(Q(quiz_id=quiz_id) & Q(quiz_attempter=request.user.id))
+        obtained_marks = marks.marks
+        total_marks = marks.total_mark
+    else:
+        return HttpResponse("Quiz not attempted")
     return render(request, 'quiz_attempter_management/marks.html', {'obtained_marks': obtained_marks, 'total_marks': total_marks, 'quiz_id': quiz_id})

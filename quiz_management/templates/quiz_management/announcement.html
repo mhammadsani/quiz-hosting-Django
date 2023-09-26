@@ -1,4 +1,4 @@
-{% extends "authentication_system.html" %}
+{% extends "base.html" %}
 
 
 {% block title %}
@@ -14,9 +14,19 @@
         {% endfor %}
         <input type="submit" value="Announce">
     </form>
+
+    {% if previous_announcements %}
+        {% for previous_announcement in previous_announcements %}
+            Announcement Number # {{ forloop.counter }} <br>
+            Subject: {{ previous_announcement.subject }} <br>
+            Details: {{ previous_announcement.details }}
+        {% endfor %}
+    {% endif %}
+
+    <br> <br>
     
     <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
-
+    <br> <br>
     {% for message in messages %}
         {{message}}
     {% endfor %}

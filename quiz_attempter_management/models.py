@@ -1,6 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
 from quiz_management.models import QuizAttempter, Quiz, Question
-from django.contrib.auth.models import User
 
 
 class Answer(models.Model):
@@ -28,5 +28,4 @@ class Comment(models.Model):
     discussion = models.ForeignKey(Discussion, on_delete=models.CASCADE)
     comment = models.CharField(max_length=200)
     commenter = models.ForeignKey(User, on_delete=models.CASCADE)
-    
     

@@ -4,41 +4,39 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from quiz_attempter_management.models import Mark
+from .decorators import host_required, admin_required
 from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm
 from .models import QuizAttempter, Quiz, Question, Announcement, QuizAndQuizAttempter
 from .utils import generate_password, generate_username
 
 
+@host_required
 def quiz_management_homepage(request):
-    if request.user.is_authenticated:
-        return render(request, 'quiz_management/quiz_management.html')
-    return HttpResponseRedirect('/')
+    return render(request, 'quiz_management/quiz_management.html')
 
 
+@host_required
 def add_quiz(request):
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            quiz_form = QuizForm(request.POST)
-            if quiz_form.is_valid():
-                title = quiz_form.cleaned_data['title']
-                category = quiz_form.cleaned_data['category']
-                start_time = quiz_form.cleaned_data['start_time']
-                end_time = quiz_form.cleaned_data['end_time']
-                quiz = Quiz(
-                    host=request.user, title=title, category=category, start_time=start_time, end_time=end_time
-                    )
-                print(request.user)
-                quiz.save()
-                messages.success(request, "Quiz Added Successfully")
-                quiz_form = QuizForm()
-                
-        else:       
+    if request.method == "POST":
+        quiz_form = QuizForm(request.POST)
+        if quiz_form.is_valid():
+            title = quiz_form.cleaned_data['title']
+            category = quiz_form.cleaned_data['category']
+            start_time = quiz_form.cleaned_data['start_time']
+            end_time = quiz_form.cleaned_data['end_time']
+            quiz = Quiz(
+                host=request.user, title=title, category=category, start_time=start_time, end_time=end_time
+                )
+            quiz.save()
+            messages.success(request, "Quiz Added Successfully")
             quiz_form = QuizForm()
-        return render(request, 'quiz_management/add_quiz.html', {'quiz_form': quiz_form})
-    else:
-        return HttpResponseRedirect('/')
+            
+    else:       
+        quiz_form = QuizForm()
+    return render(request, 'quiz_management/add_quiz.html', {'quiz_form': quiz_form})
 
 
+@host_required
 def draft_quizzes(request):
     quizzes = Quiz.objects.all()
     host = request.user
@@ -53,30 +51,25 @@ def approve_host(in_active_hosts):
             host.save()
     
 
+@admin_required
 def host_management(request):
-    if request.user.is_authenticated and request.user.is_superuser:
-        if request.method == "POST":
-            in_active_hosts = request.POST.getlist('hosts_to_approve')
-            print('in active hosts are ', in_active_hosts)
-            approve_host(in_active_hosts)
+    if request.method == "POST":
+        in_active_hosts = request.POST.getlist('hosts_to_approve')
+        approve_host(in_active_hosts)
 
-        hosts = User.objects.all()
-        return render(request, 'quiz_management/host_management.html', {'hosts': hosts})
-    else:
-        return HttpResponseRedirect('/profile/')
+    hosts = User.objects.all()
+    return render(request, 'quiz_management/host_management.html', {'hosts': hosts})
     
-    
+   
+@host_required 
 def add_questions(request, quiz_id):
     return render(request, 'quiz_management/add_question.html', {'quiz_id': quiz_id})
 
 
+@host_required
 def open_draft(request, quiz_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     questions = Question.objects.filter(quiz=quiz)
-    for question in questions:
-        print(question.question_details)
-        print(question.marks)
-        print(question.is_public)
     return render(request, 'quiz_management/quiz_draft.html', {'quiz': quiz, 
                                                                'questions': questions})
 
@@ -90,8 +83,6 @@ def mcq_question(question_form):
     answer = question_form.cleaned_data['answer']
     is_public = question_form.cleaned_data['is_public']
     marks = question_form.cleaned_data['marks']
-    print("Following is the Answer ", answer)
-    print(question_title, option1, option2, option4, option3, answer, is_public, marks)
     question_details = {
         'question_title': question_title,
         'answers': [
@@ -118,6 +109,7 @@ def subjective_question(question_form):
     return json.dumps(question_details), marks, is_public
 
 
+@host_required
 def queston(request, quiz_id, type):
     if request.method == "POST":
         if type == "mcq":
@@ -162,10 +154,14 @@ def queston(request, quiz_id, type):
                                                                  })
 
 
-
+@host_required
 def add_quiz_attempter(request, quiz_id):
     if request.method == "POST":
         quiz_attempter_form = QuizAttempterForm(request.POST)
+        # file = request.FILES['students_emails_file']
+        # import pandas as pd
+        # file = pd.read_excel(file).to_dict().values()
+        # print("file is ", file)
         if quiz_attempter_form.is_valid():
             email = quiz_attempter_form.cleaned_data['email']
             username = generate_username(email)
@@ -176,9 +172,7 @@ def add_quiz_attempter(request, quiz_id):
                     quiz_attempter.quiz_id.add(quiz)
                     quiz_attempter_form = QuizAttempterForm()
             except Exception as err:
-                print(err)
                 password = generate_password()
-                print(username, password)
                 quiz = Quiz.objects.get(pk=quiz_id)
                 quiz_attempter = QuizAttempter.objects.create(username=username, email=email)
                 quiz_attempter.quiz_id.add(quiz)
@@ -189,29 +183,31 @@ def add_quiz_attempter(request, quiz_id):
     else:       
         quiz_attempter_form = QuizAttempterForm()
     quiz_attempters = QuizAttempter.objects.filter(pk=quiz_id)
-    # print(quiz_attempters)
     return render(request, 'quiz_management/add_quiz_attempter.html', {'quiz_attempter_form': quiz_attempter_form,
                                                                        'quiz_attempters': quiz_attempters
                                                                        })
     
-
+@host_required
 def add_announcement(request, quiz_id):
+    quiz = Quiz.objects.get(pk=quiz_id)
     if request.method == "POST":
         announcement_form = AnnouncementForm(request.POST)
         if announcement_form.is_valid():
             subject = announcement_form.cleaned_data['subject']
             details = announcement_form.cleaned_data['details']
             # preparation_meterial = announcement_form.cleaned_data['preparation_material']
-            quiz = Quiz.objects.get(pk=quiz_id)
             announcement = Announcement(host=request.user, quiz=quiz, subject=subject, details=details)
             announcement.save()
             announcement_form = AnnouncementForm()
             messages.success(request, "Announcement Done")
     else:
         announcement_form = AnnouncementForm()
-    return render(request, 'quiz_management/announcement.html', {'announcement_form': announcement_form})
+    previous_announcements = Announcement.objects.filter(quiz=quiz)
+    return render(request, 'quiz_management/announcement.html', {'announcement_form': announcement_form, 
+                                                                 'previous_announcements': previous_announcements
+                                                                 })
 
-
+@host_required
 def generate_report(request, quiz_id):
     quiz = Quiz.objects.get(id=quiz_id)
     marks = Mark.objects.filter(quiz_id=quiz_id)
@@ -222,5 +218,11 @@ def generate_report(request, quiz_id):
             non_attempters.append(
                 quiz_attempter.quiz_attempter.username
             )
-    print(non_attempters)
     return render(request, 'quiz_management/report.html', {'marks': marks, 'non_attempters': non_attempters, 'is_quiz_attempted': quiz.is_quiz_attempted})
+
+
+@host_required
+def browse_public_questions(request, quiz_id):
+    questions = Question.objects.all()
+    public_questions = [question for question in questions if question.is_public]
+    return HttpResponse("PUblic Questions")

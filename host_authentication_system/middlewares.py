@@ -6,8 +6,7 @@ from quiz_attempter_management.models import QuizAttempter
 
 
 class UserIdentificatonMiddlewere:
-    
-    
+
     def __init__(self, get_response) -> None:
         self.get_response = get_response
         
@@ -18,10 +17,7 @@ class UserIdentificatonMiddlewere:
     
     
     # def process_view(self, request, *args, **kwargs): 
-    #     user = QuizAttempter.objects.get(username=request.user.username)
-    #     print(request.path)
-    #     if  user.is_authenticated and user.is_quiz_attempter:
-    #         return redirect(reverse('login'))
-    #     else:
-    #         return None
+    #     user = request.user
+    #     if user.is_authenticated:
+    #         pass
     

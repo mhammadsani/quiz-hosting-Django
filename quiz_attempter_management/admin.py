@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import Answer, Mark, Discussion, Comment
 
 
-# Register your models here.
 @admin.register(Answer)
 class AnswerAdmin(admin.ModelAdmin):
     list_display = ['id', 'quiz', 'quiz_attempter', 'answer', 'question']

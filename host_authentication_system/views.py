@@ -1,11 +1,11 @@
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from .forms import HostSignUpForm
 from quiz_management.models import QuizAttempter, Quiz, Announcement
+from .forms import HostSignUpForm
 
 
 def homepage(request):
@@ -33,29 +33,21 @@ def user_login(request):
     if request.user.is_authenticated:
         return HttpResponseRedirect('/profile/')
     if request.method == "POST":
-        user_data = AuthenticationForm(request=request, data=request.POST)
-        if user_data.is_valid():
-           username = user_data.cleaned_data['username']
-           password = user_data.cleaned_data['password']
+        form = AuthenticationForm(request=request, data=request.POST)
+        if form.is_valid():
+           username = form.cleaned_data['username']
+           password = form.cleaned_data['password']
            user = authenticate(username=username, password=password)
            if user:
                 login(request, user=user)
-            #    if user.is_admin:
-            #         return redirect('admin_dashboard')
-            #    elif user.is_host:
-            #         return redirect('host_dashboard')
-            #    elif user.is_quiz_attempter:
-            #         return redirect('quiz_attempter_dashboard')
                 try:
                     if temp_user:=QuizAttempter.objects.get(username=username):
                         if temp_user.is_first_time_login:
                             return redirect('/changepassword/')
                         if temp_user.is_quiz_attempter:
-                            return redirect('/quiz_attempter_homepage/')
+                            return redirect('/profile/')
                 except Exception as err:
-                    print("Following exception is occuring ", err)
                     return HttpResponseRedirect('/profile/')
-        form = user_data
     else:       
         form = AuthenticationForm()
     return render(request, 'host_auth_system/login.html', {'form': form})
@@ -67,8 +59,13 @@ def waitpage(request):
 
 def profile(request):
     if request.user.is_authenticated:
-        print("I am the main User", dir(request.user))
-        return render(request, 'host_auth_system/profile.html', {'user': request.user})
+        try:
+            user=QuizAttempter.objects.get(username=request.user.username)
+            if user.is_quiz_attempter:
+                is_quiz_attempter = True
+        except Exception:
+            is_quiz_attempter = False
+        return render(request, 'host_auth_system/profile.html', {'user': request.user, 'is_quiz_attempter': is_quiz_attempter})   
     return HttpResponseRedirect('/')
 
 
@@ -79,22 +76,19 @@ def host_logout(request):
 
 def change_password(request):
     if request.method == "POST":
-        updated_credentials = PasswordChangeForm(user=request.user, data=request.POST)
+        updated_credentials = SetPasswordForm(user=request.user, data=request.POST)
         if updated_credentials.is_valid():
             updated_credentials.save()
             try:
-                print(dir(request.user))
-                print(request.user.username)
                 user = QuizAttempter.objects.get(username=request.user.username)
                 if user.is_quiz_attempter:
                     user.is_first_time_login = False
                     user.save()
             except Exception as e:
-                print(Exception)
                 return HttpResponseRedirect('/quiz_attempter_homepage/')
             return HttpResponseRedirect('/profile/')
         else:
             change_password_form = updated_credentials
     else:
-        change_password_form = PasswordChangeForm(user=request.user)
+        change_password_form = SetPasswordForm(user=request.user)
     return render(request, 'host_auth_system/change_password.html' ,{'change_password_form':change_password_form})

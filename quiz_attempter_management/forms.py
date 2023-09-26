@@ -1,6 +1,7 @@
 from django import forms
 from .models import Discussion, Comment
 
+
 class DiscussionForm(forms.ModelForm):
     
     class Meta:

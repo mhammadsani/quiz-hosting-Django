@@ -1,4 +1,4 @@
-{% extends "authentication_system.html" %}
+{% extends "base.html" %}
 
 {% block title %}
     <title>Quizzes</title>
@@ -54,7 +54,7 @@
 {% else %}
 <h3>No Quiz Yet</h3>
 {% endif %}
-<a href="{% url "quiz_attempter_homepage" %}">Homepage</a>
+<a href="{% url "profile" %}">Profile Page </a>
 </body>
 </html>
 

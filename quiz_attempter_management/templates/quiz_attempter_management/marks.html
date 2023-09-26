@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
+
+{% block title %}
     <title>Marks</title>
-</head>
-<body>
+{% endblock title %}
+
+{% block content %}
     {% if total_marks %}
         {{ obtained_marks }} / {{ total_marks}}
     {% else %}
@@ -13,5 +12,4 @@
         <a href="{% url "attemptquiz" quiz_id %}"></a>
     {% endif %}
     <a href="{% url "showquizzes" %}">Show Quizzes</a>
-</body>
-</html>
+{% endblock content %}

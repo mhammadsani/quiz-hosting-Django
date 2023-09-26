@@ -1,4 +1,4 @@
-{% extends "authentication_system.html" %}
+{% extends "base.html" %}
 
 {% block title %}
     <title>Show Discussion</title>
@@ -50,8 +50,12 @@
     {% else %}
         <h3>No discussions has been initiated yet</h3>
     {% endif %}
-    <a href="{% url "showquizzes" %}">Show Quizzes</a> <br>
-    <a href="{% url "discussion" quiz_id %}">Discussion Details</a>
+    {% if is_quiz_attempter %}
+        <a href="{% url "showquizzes" %}">Show Quizzes</a> <br>
+        <a href="{% url "discussion" quiz_id %}">Discussion Details</a>
+    {% else %}
+        <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+    {% endif %}
 
 
 {% endblock content %}

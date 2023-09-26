@@ -1,4 +1,4 @@
-{% extends "authentication_system.html" %}
+{% extends "base.html" %}
 
 
 {% block title %}
@@ -10,11 +10,12 @@
         {% for quiz in quizzes %}
             {% if quiz.host == host %}
             
-            <h3>Quiz Title is :{{ quiz.title }}</h3> <a href="{% url "draft"  quiz.id %}"> Edit Draft </a>    || 
+            <h3>Quiz Title is :{{ quiz.title }}</h3> <a href="{% url "draft"  quiz.id %}"> Add Questions </a>    || 
             <br> <a href="{% url "addquizattempter" quiz.id %}"> Add Quiz Attempters </a>  ||
             <br> <a href="{% url "announcement" quiz.id %}">Announcement</a>
             <br> <a href="{% url "viewdiscussions" quiz.id%}">View Discussions</a>
             <br> <a href="{% url "generatereport" quiz.id%}">Generate Quiz Report</a>
+            {% comment %} <br> <a href="{% url "publicquestions" quiz.id %}">View Public Questions</a> {% endcomment %}
             <h4> ============================== </h4>
             {% endif %}
         {% endfor %}

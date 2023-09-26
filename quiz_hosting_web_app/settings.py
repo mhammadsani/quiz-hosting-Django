@@ -39,7 +39,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'host_authentication_system.middlewares.UserIdentificatonMiddlewere'
+    # 'host_authentication_system.middlewares.UserIdentificatonMiddlewere',
+    
 ]
 
 ROOT_URLCONF = 'quiz_hosting_web_app.urls'
@@ -114,19 +115,17 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_ROOTS = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# EMAIL_SETTINGS
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST
-# EMAIL_PORT
-# EMAIL_HOST_USER
-# EMAIL_HOST_PASSWORD
-# EMAIL_USE_TLS
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True

@@ -1,19 +1,20 @@
-{% extends "authentication_system.html" %}
+{% extends "base.html" %}
 
 {% block title %}
     <title>Add Quiz Attempter</title>
 {% endblock title %}
 
 {% block content %}
-    <form action="" method='POST' novalidate>
+    <form action="" method='POST' enctype="multipart/form-data" novalidate>
         {% csrf_token %}
+        <h1>Add by email</h1>
         {{ quiz_attempter_form }}
+        {% comment %} <h1>Add by uploading file</h1>
+        <input type="file" name="students_emails_file"> {% endcomment %}
+        <br>
         <input type="submit" value="Add">
     </form>
     <br> <br>
-    {% comment %} {% for quiz_attempter in quiz_attempters %}
-        {{ quiz_attempter.username }} || {{ quiz_attempter.email }}
-    {% endfor %} {% endcomment %}
     <br> <br>
     {% if messages %}
         {% for message in messages %}
