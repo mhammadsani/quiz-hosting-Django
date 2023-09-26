@@ -6,8 +6,8 @@ from django.shortcuts import render
 from quiz_attempter_management.models import Mark
 from .decorators import host_required, admin_required
 from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm
-from .models import QuizAttempter, Quiz, Question, Announcement, QuizAndQuizAttempter
-from .utils import generate_password, generate_username
+from .models import  Quiz, Question, Announcement, QuizAndQuizAttempter
+from .utils import get_emails_from_excel_file, add_quiz_attempter_by_email, add_quiz_attempter_by_emails
 
 
 @host_required
@@ -152,44 +152,6 @@ def queston(request, quiz_id, type):
         return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
                                                                  'question_type': type
                                                                  })
-
-
-
-def get_emails_from_excel_file(excel_file):
-    import pandas as pd
-    data_frame = pd.read_excel(excel_file)
-    emails = []
-    for email in data_frame['emails']:
-        emails.append(email)
-    return emails
-
-
-def add_quiz_attempter_by_email(quiz_id, quiz_attempter_form):
-    email = quiz_attempter_form.cleaned_data['email']
-    if email:
-        username = generate_username(email)
-        add_quiz_attempter_to_database(email, username, quiz_id)
-    
-    
-def add_quiz_attempter_by_emails(quiz_id, emails):
-    for email in emails:
-        username = generate_username(email)
-        add_quiz_attempter_to_database(email, username, quiz_id)
-
-
-def add_quiz_attempter_to_database(email, username, quiz_id):
-    try:
-        quiz_attempter = QuizAttempter.objects.get(username=username)
-        if quiz_attempter:
-            quiz = Quiz.objects.get(pk=quiz_id)
-            quiz_attempter.quiz_id.add(quiz)
-    except Exception as err:
-        password = generate_password()
-        quiz = Quiz.objects.get(pk=quiz_id)
-        quiz_attempter = QuizAttempter.objects.create(username=username, email=email)
-        quiz_attempter.quiz_id.add(quiz)
-        quiz_attempter.set_password(password)
-        quiz_attempter.save()
 
 
 @host_required
