@@ -9,17 +9,22 @@
         {% csrf_token %}
         <h1>Add by email</h1>
         {{ quiz_attempter_form }}
-        {% comment %} <h1>Add by uploading file</h1>
-        <input type="file" name="students_emails_file"> {% endcomment %}
+        <h1>Add by uploading file</h1>
+        <input type="file" name="students_emails_file">
         <br>
         <input type="submit" value="Add">
     </form>
     <br> <br>
     <br> <br>
-    {% if messages %}
-        {% for message in messages %}
-            {{ message }}
+
+    {% if quiz_attempters %}
+        {% for quiz_attempter in quiz_attempters %}
+            {{ quiz_attempter.quiz_attempter.username }} || {{ quiz_attempter.quiz_attempter.email }} </a> <br> <br>
         {% endfor %}
+    {% else %}
+    <h3>No quiz attempter added</h3>
     {% endif %}
+
+
     <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
 {% endblock content %}

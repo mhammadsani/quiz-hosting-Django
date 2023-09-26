@@ -15,6 +15,9 @@ class Quiz(models.Model):
     def __str__(self) -> str:
         return self.title
     
+    class Meta:
+        ordering = ['start_time', 'end_time']
+    
 
 class Question(models.Model):
     quiz = models.ManyToManyField(Quiz)

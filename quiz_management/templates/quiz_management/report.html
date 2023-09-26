@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-    <title>Report</title>
+    <title>Report {{ quiz_title }} </title>
 {% endblock title %}
 
 {% block content %}
+    <h1>Report for the Quiz: {{ quiz_title }} </h1>
     {% if is_quiz_attempted %}
     {% if marks %}
         <h3>One's who has attempted</h3>
@@ -15,8 +16,8 @@
         {% if non_attempters %}
         <h3>One's who has not attempted </h3>
             {% for non_attempter in non_attempters %}
-                {{ non_attempter}}
-            {% endfor %}
+                {{ non_attempter}} <br>
+            {% endfor %} 
         {% endif %}
         {% else %}
             <h3> Report cannot be generated yet as there is time left </h3>
