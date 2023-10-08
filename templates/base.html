@@ -3,15 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    {% block specific_page_css %}{% endblock specific_page_css %}
+
     {% block title %}  
         <title>Base Template</title>
     {% endblock title %}
+    
+    <style>
+        .sidebar {
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #333;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #fff;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #555;
+        }
+        .content {
+            padding: 20px;
+        }
+
+    </style>
 </head>
 <body>
-    {% block content %}
-        <h2>Content from base template</h2>
-    {% endblock content %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <div class="container-fluid">
+        <div class="row">
+            {% block navbar %}
+                <nav class=" col-2 d-md-block sidebar text-center">
+                    {% block nav_elements %}
+                        <a href="{% url "homepage" %}">Home</a>
+                        <a href="{% url "signup" %}">Sign Up</a>
+                        <a href="{% url "login" %}">Login</a>
+                    {% endblock nav_elements %}
+                </nav>
+            {% endblock navbar %}
+
+        </div>
+        <main role="main" class="col-10 ml-sm-auto px-md-4 content">
+            {% block content %}
+                <h2>Content from Above template</h2>
+            {% endblock content %}
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

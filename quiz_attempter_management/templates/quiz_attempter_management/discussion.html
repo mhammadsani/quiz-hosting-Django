@@ -1,11 +1,28 @@
 {% extends "base.html" %}
 
 {% block title %}
-    <title> Discussion </title>
+    <title>Discussion</title>
 {% endblock title %}
 
-{% block content %}
-    <a href="{% url "startdiscussion" quiz_id %}">Start Discussion</a> <br> <br>
-    <a href="{% url "viewdiscussions" quiz_id %}">View Discussions</a> <br> <br>
+{% block nav_elements %}
     <a href="{% url "showquizzes" %}">Show Quizzes</a>
+    <a href="{% url "logout" %}">Logout</a>
+{% endblock nav_elements %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center">Discussion Menu</h1>
+                        <div class="list-group">
+                            <a href="{% url "startdiscussion" quiz_id %}" class="list-group-item list-group-item-action">Start Discussion</a>
+                            <a href="{% url "viewdiscussions" quiz_id %}" class="list-group-item list-group-item-action">View Discussions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

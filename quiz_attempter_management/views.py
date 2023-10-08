@@ -23,7 +23,6 @@ def quiz_attempter_homepage(request):
 
 @quiz_attempter_required
 def show_quizzes(request):
-    print(dir(request))
     quiz_attempter = QuizAttempter.objects.get(id=request.user.id)
     quizzes = quiz_attempter.quiz_id.all()
     available_quizzes = []
@@ -65,7 +64,6 @@ def start_discussion(request, quiz_id):
 @host_or_quiz_attempter_required
 def discussion_details(request, quiz_id):
     return render(request, 'quiz_attempter_management/discussion.html', {'quiz_id': quiz_id})
-
 
 
 def quiz_attempter(request):
@@ -126,6 +124,12 @@ def save_marks(quiz_attempter, quiz_id, quiz):
         elif question_details['type'] == "subjective":
             if user_answer == question_details["answers"]:
                 marks += question.marks
+        elif question_details['type'] == 'boolean':
+            try:
+                if user_answer == question_details['answers']:
+                    marks += question.marks
+            except Exception as err:
+                print("Following error has occuered while saving marks", err)
 
     quiz_attempter = QuizAttempter.objects.get(pk=quiz_attempter)
     quiz = quiz_attempter.quiz_id.get(id=quiz_id)
@@ -141,7 +145,7 @@ def is_quiz_attemptted(user, quiz_id):
 def attempt_quiz(request, quiz_id):
     is_quiz_attempter_by_user = is_quiz_attemptted(request.user, quiz_id)
     if is_quiz_attempter_by_user:
-        return redirect(f'/quiz_attempter_homepage/marks/{quiz_id}/')
+        return redirect(f'/quiz-attempter-homepage/marks/{quiz_id}/')
     final_questions = []
     if request.method == "POST":
         questions = Question.objects.filter(quiz=quiz_id)
@@ -155,7 +159,7 @@ def attempt_quiz(request, quiz_id):
         test.is_attempted = True
         test.save()
         save_marks(quiz_attempter, quiz_id, quiz)
-        return HttpResponse("Quiz Attempted")
+        return redirect(f'/quiz-attempter-homepage/marks/{quiz_id}/')
     else:
         questions = Question.objects.filter(quiz=quiz_id)
         for question in questions:
@@ -169,16 +173,81 @@ def attempt_quiz(request, quiz_id):
                 'answers': answers,
                 'id': question.id
             })
-    return render(request, "quiz_attempter_management/attempt_quiz.html", {'final_questions': final_questions})
+            quiz_title = Quiz.objects.get(id=quiz_id).title
+    return render(request, "quiz_attempter_management/attempt_quiz.html", {'final_questions': final_questions,
+                                                                           'quiz_title': quiz_title})
 
 
 @quiz_attempter_required
 def marks(request, quiz_id):
     is_quiz_attemptted = QuizAndQuizAttempter.objects.get(Q(quiz_attempter=request.user) & Q(quiz=quiz_id)).is_attempted
+    quiz = Quiz.objects.get(id=quiz_id)
+    
     if is_quiz_attemptted:
         marks = Mark.objects.get(Q(quiz_id=quiz_id) & Q(quiz_attempter=request.user.id))
         obtained_marks = marks.marks
         total_marks = marks.total_mark
+        answers = Answer.objects.filter(Q(quiz=quiz) & Q(quiz_attempter=request.user.id))
+        user_answers_and_correct_answers = []
+        for answer in answers:
+            question_details = json.loads(answer.question.question_details)
+            question_title = question_details['question_title']
+            type = question_details['type']
+            if type == "mcq":
+                options = question_details['answers']
+                for option in options:
+                    if option['is_correct_answer']:
+                        correct_answer = option[list(option.keys())[0]]
+                user_answer = answer.answer
+                
+                alert = "alert alert-danger"
+                if user_answer == correct_answer:
+                    alert = "alert alert-success"
+                
+                user_answers_and_correct_answers.append(
+                    {
+                    'title': question_title,
+                    'user_answer': user_answer,
+                    'correct_answer': correct_answer,
+                    'alert': alert
+                    }
+                )
+                        
+            if type == "subjective":
+                correct_answer = question_details['answers']
+                print(correct_answer)
+                
+                user_answer = answer.answer
+                
+                alert = "alert alert-danger"
+                if user_answer == correct_answer:
+                    alert = "alert alert-success"
+                
+                user_answers_and_correct_answers.append(
+                    {
+                    'title': question_title,
+                    'user_answer': user_answer,
+                    'correct_answer': correct_answer,
+                    'alert': alert
+                    }
+                )
+            if type == 'boolean':
+                correct_answer = question_details['answers']
+                user_answer = answer.answer
+                alert = "alert alert-danger"
+                if user_answer == correct_answer:
+                    alert = "alert alert-success"
+                
+                user_answers_and_correct_answers.append(
+                    {
+                    'title': question_title,
+                    'user_answer': user_answer,
+                    'correct_answer': correct_answer,
+                    'alert': alert
+                    }
+                )
     else:
-        return HttpResponse("Quiz not attempted")
-    return render(request, 'quiz_attempter_management/marks.html', {'obtained_marks': obtained_marks, 'total_marks': total_marks, 'quiz_id': quiz_id})
+        return redirect(f'/quiz-attempter-homepage/attempt-quiz/{quiz_id}/')
+    return render(request, 'quiz_attempter_management/marks.html', {'obtained_marks': obtained_marks, 'total_marks': total_marks, 'quiz_id': quiz_id, 
+                                                                    'user_answers': user_answers_and_correct_answers
+                                                                    })

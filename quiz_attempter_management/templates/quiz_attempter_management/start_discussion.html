@@ -1,18 +1,42 @@
 {% extends "base.html" %}
 
-
 {% block title %}
     <title>Start Discussion</title>
 {% endblock title %}
 
+{% block nav_elements %}
+    <a href="{% url "discussion" quiz_id %}" >Discussion Details</a>
+    <a href="{% url "viewdiscussions" quiz_id %}">View Discussions</a>
+    <a href="{% url "showquizzes" %}">Show Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+
+
+{% endblock nav_elements %}
+
+
+
 {% block content %}
-    <form action="" method="POST" novalidate>
-        {% csrf_token %}
-        {% for form_info in discussion_form %}
-            {{ form_info.label_tag }} {{ form_info }} {{ form_info.errors }}  <br> <br>
-        {% endfor %}
-        <input type="submit" value="start">
-    </form>
-    <a href="{% url "discussion" quiz_id %}">Discussion Details</a>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <form action="" method="POST" novalidate>
+                            {% csrf_token %}
+                            {% for form_info in discussion_form %}
+                                <div class="form-group">
+                                    {{ form_info.label_tag }}
+                                    {{ form_info }}
+                                    {{ form_info.errors }}
+                                </div>
+                            {% endfor %}
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary">Start</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
-    

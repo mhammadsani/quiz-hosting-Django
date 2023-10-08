@@ -1,26 +1,55 @@
 {% extends "base.html" %}
 
 {% block title %}
-    <title>Report {{ quiz_title }} </title>
+    <title>Report {{ quiz_title }}</title>
 {% endblock title %}
 
-{% block content %}
-    <h1>Report for the Quiz: {{ quiz_title }} </h1>
-    {% if is_quiz_attempted %}
-    {% if marks %}
-        <h3>One's who has attempted</h3>
-            {% for mark in marks %}
-                {{ mark.quiz_attempter.username }} {{ mark.marks }} <br>
-            {% endfor %}
-        {% endif %}
-        {% if non_attempters %}
-        <h3>One's who has not attempted </h3>
-            {% for non_attempter in non_attempters %}
-                {{ non_attempter}} <br>
-            {% endfor %} 
-        {% endif %}
-        {% else %}
-            <h3> Report cannot be generated yet as there is time left </h3>
-    {% endif %}
+
+{% block nav_elements %}
     <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center">Report for the Quiz: {{ quiz_title }}</h1>
+
+        {% if is_quiz_attempted %}
+            <div class="table-responsive mt-4">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mark in marks %}
+                            <tr>
+                                <td>{{ mark.quiz_attempter.username }}</td>
+                                <td>{{ mark.marks }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if non_attempters %}
+                <h3 class="mt-4">Ones who have not attempted:</h3>
+                <ul class="list-group">
+                    {% for non_attempter in non_attempters %}
+                        <li class="list-group-item">{{ non_attempter }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning mt-4">
+                Report cannot be generated yet as there is time left.
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{% url "draftquizzes" %}" class="btn btn-primary">Back to Draft Quizzes</a>
+        </div>
+    </div>
 {% endblock content %}

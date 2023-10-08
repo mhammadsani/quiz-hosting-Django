@@ -4,12 +4,53 @@
     <title>Marks</title>
 {% endblock title %}
 
-{% block content %}
-    {% if total_marks %}
-        {{ obtained_marks }} / {{ total_marks}}
-    {% else %}
-        <h3>Quiz not attempted Yet!</h3>
-        <a href="{% url "attemptquiz" quiz_id %}"></a>
-    {% endif %}
+
+{% block nav_elements %}
     <a href="{% url "showquizzes" %}">Show Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
+
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body text-center">
+                {% if total_marks %}
+                    <h2 class="card-title">Marks Obtained:</h2>
+                    <h1 class="display-3">{{ obtained_marks }} / {{ total_marks }}</h1>
+                {% else %}
+                    <h3 class="card-title">Quiz not attempted yet!</h3>
+                    <a href="{% url 'attemptquiz' quiz_id %}" class="btn btn-primary">Attempt Quiz</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+<table class="table table-bordered ">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user_answer in user_answers %}
+        <tr class="{{ user_answer.alert }}" style="border: 2px solid #8d8d8d;">
+            <td>{{ user_answer.title }}</td>
+            <td>{{ user_answer.user_answer }}</td>
+            <td>{{ user_answer.correct_answer }}</td>
+        </tr>
+        
+        {% endfor %}
+    </tbody>
+</table>
+
+    
+    <div class="container mt-4">
+        <div class="text-center">
+            <a href="{% url 'showquizzes' %}" class="btn btn-secondary">Show Quizzes</a>
+        </div>
+    </div>
 {% endblock content %}

@@ -20,13 +20,14 @@ class Quiz(models.Model):
     
 
 class Question(models.Model):
-    quiz = models.ManyToManyField(Quiz)
+    quiz = models.ManyToManyField(Quiz, related_name="questions")
     question_details = models.JSONField()
     is_public = models.BooleanField(default=False)
     marks = models.IntegerField(default=1)
     
     def __str__(self) -> str:
         return "Question " + str(self.id)
+
     
 
 class QuizAttemptersExcel(models.Model):
@@ -56,4 +57,7 @@ class Announcement(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     subject = models.CharField(max_length=200)
     details = models.TextField()
+    
+    class Meta:
+        ordering = ['-id']
     

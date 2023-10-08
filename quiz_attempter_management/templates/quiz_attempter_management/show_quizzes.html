@@ -9,21 +9,35 @@
                 border-collapse: collapse;
             }
 
-            table, th, td {
-                border: 1px solid black;
-            }
-
             th, td {
-                padding: 10px;
+                border: 1px solid #ddd;
+                padding: 8px;
                 text-align: center;
             }
 
             th {
                 background-color: #f2f2f2;
             }
+
+            tr:hover {
+                background-color: #f5f5f5;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            .actions {
+                white-space: nowrap;
+            }
         </style>
     </head>
 {% endblock title %}
+
+{% block nav_elements %}
+    <a href="{% url "profile" %}">Profile</a>
+    <a href="{% url "logout" %}">Logout</a>
+{% endblock nav_elements %}
 
 {% block content %}
 {% if quizzes %}
@@ -34,7 +48,7 @@
                 <th>Start Time</th>
                 <th>End Time</th>
                 <th>Announcement</th>
-                <th>Attempt</th>
+                <th class="actions">Actions</th>
                 <th>Discussion</th>
             </tr>
         </thead>
@@ -44,17 +58,19 @@
                     <td>{{quiz.title}}</td>
                     <td>{{quiz.start_time}}</td>
                     <td>{{quiz.end_time}}</td>
-                    <td><a href="{% url "announcements" quiz.id %}"> Announcements </a></td>
-                    <td><a href="{% url "attemptquiz" quiz.id %}">Attempt</a> /  <a href="{% url "marks" quiz.id %}">See Marks</a></td>
+                    <td><a href="{% url "announcements" quiz.id %}">Announcements</a></td>
+                    <td class="actions">
+                        <a href="{% url "attemptquiz" quiz.id %}">Attempt</a> /  
+                        <a href="{% url "marks" quiz.id %}">See Marks</a>
+                    </td>
                     <td><a href="{% url "discussion" quiz.id%}">Discussion</a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 {% else %}
-<h3>No Quiz Yet</h3>
+    <h3>No Quiz Yet</h3>
 {% endif %}
-<a href="{% url "profile" %}">Profile Page </a>
 </body>
 </html>
 

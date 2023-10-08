@@ -1,28 +1,51 @@
 {% extends "base.html" %}
-
+{% load static %}
 
 {% block title %}
     <title>Login</title>
 {% endblock title %}
 
+{% block specific_page_css %}
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
+{% endblock specific_page_css %}
 
 {% block content %}
-    <h2>Welcome to Login Page</h2> <br> <br>
-    {% if form.non_field_errors %}
-        {% for error in form.non_field_errors %}
-            <p> {{ error }} </p> 
-        {% endfor %}
-    {% endif %}
-    <form action="" method="POST">
-        {% csrf_token %}
-        {% for fm in form %}
-            {{ fm.label_tag }} {{ fm }} {{ fm.errors }} <br><br>
-        {% endfor %}
-        <input type="submit" value="Login">
-    </form>
-    <br> 
-    <a href="{% url "homepage" %}">HomePage</a> || 
-    <a href="{% url "signup" %}">Sign Up</a> <br> <br>
-
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center main-color">Login Here</h2>
+                    <br><br>
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <p class="text-danger text-center">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <form class="needs-validation" action="" method="POST" novalidate>
+                        {% csrf_token %}
+                        {% for fm in form %}
+                            <div class="form-group row">
+                                <label for="{{ fm.id }}" class="col-sm-3 col-form-label text-right">{{ fm.label_tag }}</label>
+                                <div class="col-sm-9">
+                                    {{ fm }}
+                                    {% if fm.errors %}
+                                        <div class="text-danger">
+                                            {% for error in fm.errors %}
+                                                <p>{{ error }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="form-group text-center">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
-

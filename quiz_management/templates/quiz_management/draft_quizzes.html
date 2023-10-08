@@ -5,23 +5,45 @@
    <title> Draft Quizzes </title>
 {% endblock title %}
 
+{% block nav_elements %}
+    <a href="{% url "addquiz" %}">Add Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
 
 {% block content %}
-        {% for quiz in quizzes %}
-            {% if quiz.host == host %}
-            
-            <h3>Quiz Title is :{{ quiz.title }}</h3> <a href="{% url "draft"  quiz.id %}"> Add Questions </a>    || 
-            <br> <a href="{% url "addquizattempter" quiz.id %}"> Add Quiz Attempters </a>  ||
-            <br> <a href="{% url "announcement" quiz.id %}">Announcement</a>
-            <br> <a href="{% url "viewdiscussions" quiz.id%}">View Discussions</a>
-            <br> <a href="{% url "generatereport" quiz.id%}">Generate Quiz Report</a>
-            {% comment %} <br> <a href="{% url "publicquestions" quiz.id %}">View Public Questions</a> {% endcomment %}
-            <h4> ============================== </h4>
-            {% endif %}
-        {% endfor %}
-        <h3>Add Quiz</h3>
-        <a href="{% url "quizmanagement" %}">Quiz Management</a> <br><br>
-        <a href="{% url "addquiz" %}">Add Quiz</a> <br> <br>
-        <a href="{% url "profile" %}">Profile Page</a>
-
+    {% if quizzes %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Quiz Title</th>
+                <th>Actions</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quizzes %}
+                {% if quiz.host == host %}
+                    <tr>
+                        <td>{{ quiz.title }}</td>
+                        <td class="action-links d-flex flex-column justify-content-center">
+                            <a href="{% url 'draft' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Add Questions</a>
+                            <a href="{% url 'addquizattempter' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Add Quiz Attempters</a>
+                            <a href="{% url 'announcement' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Announcement</a>
+                            <a href="{% url 'viewdiscussions' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">View Discussions</a>
+                            <a href="{% url 'generatereport' quiz.id %}" class="btn" style="color: white; background-color: #333;">Generate Quiz Report</a>
+                        </td>
+                        <td>{{ quiz.start_time }}</td>
+                        <td>{{ quiz.end_time }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <div class="text-center alert alert-info">
+            <h2>There are no quizzes here. Add one!</h2>
+        </div>
+    {% endif %}
 {% endblock content %}

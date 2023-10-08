@@ -2,46 +2,59 @@
 
 {% block title %}
     <title>Full Discussion</title>
-    <head>
-        <style>
-            span{
-                color:red;
-            }
-            .discussion, .comment{
-                border: 2px solid black;
-                padding: 5px;
-                border-top: 2px;
-            }
-            
-        </style>
-    </head>
 {% endblock title %}
 
+{% block nav_elements %}
+    <a href="{% url "profile" %}" class="nav-link">Profile</a>
+{% endblock nav_elements %}
+
+
 {% block content %}
-    <div class="discussion">
-        {{ discussion.subject }}
-        <hr>
-        {{ discussion.details }}
-        <span>{{author}}</span>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">{{ discussion.subject }}</h2>
+                <hr>
+                <p class="card-text">{{ discussion.details }}</p>
+                <span class="text-muted">Author: {{ author }}</span>
+            </div>
+        </div>
     </div>
 
-    {% for comment in  comments%}
-        <div class="comment">
-            {{ comment.comment }}
-            <span>{{ comment.commenter.username }}</span>
-        </div>
-    {% endfor %}
-    <br>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ comment_form.label_tag }} {{ comment_form }} {{ comment_form.errors }}
-        <input type="submit" value="comment">
-    </form>
-    <br>
-    {% if is_quiz_attempter %}
-        <a href="{% url "discussion" quiz_id%}">Discussions</a>
-    {% else %}
-    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
-    <a href="{% url "viewdiscussions" quiz_id%}">View Discussion</a>
-    {% endif %}
+    <div class="container mt-4">
+        {% for comment in comments %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="card-text">{{ comment.comment }}</p>
+                    <span class="text-muted">Commenter: {{ comment.commenter.username }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="container mt-4">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ comment_form.label_tag }}
+                {{ comment_form }}
+                {{ comment_form.errors }}
+            </div>
+            <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
+    </div>
+
+<div class="container mt-4">
+    <div class="row d-flex justify-content-center">
+            {% if is_quiz_attempter %}
+                <a href="{% url "discussion" quiz_id %}" class="btn btn-secondary">Discussions</a>
+            {% else %}
+                <a href="{% url "draftquizzes" %}" class="btn btn-secondary mr-1">Draft Quizzes</a> 
+                <a href="{% url "viewdiscussions" quiz_id %}" class="btn btn-secondary">View Discussion</a>
+            {% endif %}
+    </div>
+</div>
+
+
+
 {% endblock content %}

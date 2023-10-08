@@ -3,10 +3,7 @@ db.sqlite3
 host_authentication_system/__pycache__/
 host_authentication_system/migrations/__pycache__/
 quiz_attempter_management/__pycache__/
-quiz_attempter_management/migrations/0001_initial.py
-quiz_attempter_management/migrations/0002_initial.py
 quiz_attempter_management/migrations/__pycache__/
 quiz_hosting_web_app/__pycache__/
 quiz_management/__pycache__/
-quiz_management/migrations/0001_initial.py
 quiz_management/migrations/__pycache__/

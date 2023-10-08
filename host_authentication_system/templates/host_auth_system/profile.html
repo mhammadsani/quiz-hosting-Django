@@ -3,16 +3,167 @@
 {% block title %}
     <title> Profile </title>
 {% endblock title %}
-{% block content %}
-    <h3>Welcome {{ user }}</h3> 
+
+
+{% block nav_elements %}
     {% if user.is_superuser %}
-        <a href="{% url "hostmanagement" %}">Admin Management</a> <br><br>
+        <a href="{% url "hostmanagement" %}">New Hosts</a>
     {% elif is_quiz_attempter %}
-        <a href="{% url "showquizzes" %}"> Show Quizzes </a> <br> <br>
+        <a href="{% url "showquizzes" %}">Show Quizzes</a>
     {% else %}
-        <a href="{% url "quizmanagement" %}">Quiz Host Management</a> <br><br>
+        <a href="{% url "addquiz" %}">Add New Quiz</a>
+        <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
     {% endif %}
-    {% comment %} <a href="{% url "quiz_attempter_homepage" %}">Quiz Attempter</a> {% endcomment %}
-    <a href="{% url "logout" %}">Logout</a> <br> 
-    <a href="{% url "changepassword" %}">Change Password</a> <br> 
+    <a href="{% url "changepassword" %}">Change Password</a>
+    <a href="{% url "logout" %}">Logout</a>
+{% endblock nav_elements %}
+
+{% block content %}
+    <h1>Hey,  <span class='text-secondary'>{{ user | capfirst}}</span> </h1> 
+    {% if user.is_superuser %}
+        <a href="{% url "hostmanagement" %}">New Hosts</a> <br><br>
+    {% elif is_quiz_attempter %}
+                <section id="features" class="bg-light py-5 d-flex justify-content-center align-items-center" style="height: 85vh;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Attempt Quizzes</h3>
+                                <p class="card-text">Effortlessly attempt quizzes, focus on solution part</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Don't Forget, time limits for quiz</h3>
+                                <p class="card-text">There are time limits for Quiz</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Announcements</h3>
+                                <p class="card-text">View Announcements by Quiz Host</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Discussion Forums</h3>
+                                <p class="card-text">Only you can start the discussion</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Auto Grading</h3>
+                                <p class="card-text">Instant Result</p>
+                            </div>
+                        </div>
+                    </div>
+                
+
+                </div>
+            </div>
+        </section>
+    {% else %}
+        <h3 class="text-center text-primary">You can now utilize the following features </h3>
+
+        <section id="features" class="bg-light py-5 d-flex justify-content-center align-items-center" style="height: 85vh;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Create Quizzes</h3>
+                                <p class="card-text">Effortlessly create quizzes with a few clicks.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Various Question Types</h3>
+                                <p class="card-text">Include MCQs, Subjective, and Boolean questions.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Set Time Limits</h3>
+                                <p class="card-text">Configure time limits for your quizzes.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Announcements</h3>
+                                <p class="card-text">Stay connected with announcements.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Discussion Forums</h3>
+                                <p class="card-text">Engage in discussions with participants.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Manage Participants</h3>
+                                <p class="card-text">Add and manage quiz attempters.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Auto Grading</h3>
+                                <p class="card-text">Efficient auto-grading for quizzes.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Email Integration</h3>
+                                <p class="card-text">Configure email credentials for notifications.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h3 class="card-title">Generate Report</h3>
+                                <p class="card-text">Attempted Quizzes Reports</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    {% endif %}
 {% endblock content %}

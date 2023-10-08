@@ -1,28 +1,39 @@
 {% extends "base.html" %}
 
-
 {% block title %}
     <title>Sign Up Page</title>
 {% endblock title %}
 
-
 {% block content %}
-    <form action="" method="POST">
-        {% csrf_token %}
-        {% for fm in form %}
-            {{ fm.label_tag }} {{ fm }} {{ fm.errors }} <br><br>
-        {% endfor %}
-        <input type="submit" value="Sign Up">
-    </form>
-    <br> 
-
-    {% if messages %}
-        {% for message in messages %}
-            <p> {{ message }} </p>
-        {% endfor %}
-    {% endif %}
-
-    <a href="{% url "login" %}"> Login </a> <br> <br>
-    <a href="{% url "homepage" %}">HomePage</a>
-
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        {% for fm in form %}
+                            <div class="form-group row">
+                                <label for="{{ fm.id }}" class="col-sm-5 col-form-label text-right">{{ fm.label_tag }}</label>
+                                <div class="col-sm-7">
+                                    {{ fm }}
+                                    {{ fm.errors }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="form-group text-center">
+                            <input type="submit" class="btn btn-primary" value="Sign Up">
+                        </div>
+                    </form>
+                    <br>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p class="text-success text-center">{{ message }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}

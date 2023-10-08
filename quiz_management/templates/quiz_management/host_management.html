@@ -1,22 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hosts</title>
-</head>
-<body>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {% for host in hosts %}
-            {% if host.is_active == False %}
-                {{ host }}  || <input type="checkbox" name="hosts_to_approve" value="{{ host.username }}" id="is_active"> <br>
-            {% endif %}
-        {% endfor %}
-        <br><br>
-        <input type="submit" value="Approve">
-    </form>
-    <br><br>
-    <a href="{% url "profile" %}"> Profile </a>
-</body>
-</html>
+{% extends "base.html" %}
+
+
+{% block title %}
+    <title>Approve Host</title>
+{% endblock title %}
+
+{% block nav_elements %}
+    <a href="{% url "profile" %}">Profile</a>
+    <a href="{% url "changepassword" %}">Change Password</a>
+    <a href="{% url "logout" %}">Logout</a>
+{% endblock nav_elements %}
+
+
+
+
+{% block content %}
+    <div class="container mt-5">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Host</th>
+                        <th>Approve</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for host in hosts %}
+                        {% if host.is_active == False %}
+                            <tr>
+                                <td>{{ host }}</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="hosts_to_approve" value="{{ host.username }}" id="is_active">
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <input type="submit" class="btn btn-primary" value="Approve">
+        </form>
+    </div>
+{% endblock content %}

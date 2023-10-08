@@ -4,20 +4,33 @@
     <title>Add Quiz</title>
 {% endblock title %}
 
+{% block nav_elements %}
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
 {% block content %}
-    <form action="" method="POST" novalidate>
-        {% csrf_token %}
-        {% for form in quiz_form %}
-            {{ form.label_tag }} {{ form }} {{ form.errors | striptags }} <br><br>
-        {% endfor %}
-        <button type="submit">Add</button>
-    </form>
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center" style="min-height: 88vh;">
+            <form action="" method="POST" novalidate>
+                {% csrf_token %}
+                {% for form in quiz_form %}
+                        <label for="{{ form.id_for_label }}">{{ form.label }}</label>
+                        {{ form }}
+                        <small class="text-danger">{{ form.errors }}</small>
+                        <br>
+                {% endfor %}
+                <button type="submit" class="btn btn-success">Add</button>
+            </form>
+        </div>
+    </div>
+
+
+
     <br>
     {% if messages %}
         {% for message in messages %}
-           <h2>   {{ message }}  </h2>
+           <h2 class="text-center">   {{ message }}  </h2>
         {% endfor %}
     {% endif %}
-    <a href="{% url "quizmanagement" %}">Quiz Management</a> <br> <br>
-    <a href="{% url "profile" %}">Profile</a>
 {% endblock content %}

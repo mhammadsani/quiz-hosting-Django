@@ -9,8 +9,6 @@ from .forms import HostSignUpForm
 
 
 def homepage(request):
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/profile/')
     return render(request, 'host_auth_system/index.html')
 
 
@@ -41,10 +39,10 @@ def user_login(request):
            if user:
                 login(request, user=user)
                 try:
-                    if temp_user:=QuizAttempter.objects.get(username=username):
-                        if temp_user.is_first_time_login:
+                    if quiz_attempter:=QuizAttempter.objects.get(username=username):
+                        if quiz_attempter.is_first_time_login:
                             return redirect('/changepassword/')
-                        if temp_user.is_quiz_attempter:
+                        if quiz_attempter.is_quiz_attempter:
                             return redirect('/profile/')
                 except Exception as err:
                     return HttpResponseRedirect('/profile/')
@@ -85,7 +83,7 @@ def change_password(request):
                     user.is_first_time_login = False
                     user.save()
             except Exception as e:
-                return HttpResponseRedirect('/quiz_attempter_homepage/')
+                return HttpResponseRedirect('/quiz-attempter-homepage/')
             return HttpResponseRedirect('/profile/')
         else:
             change_password_form = updated_credentials

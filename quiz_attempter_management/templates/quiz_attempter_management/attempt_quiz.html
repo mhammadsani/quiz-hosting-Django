@@ -1,43 +1,65 @@
 {% extends "base.html" %}
 
-
 {% block title %}
     <title>Attempt Quiz</title>
 {% endblock title %}
 
+{% block nav_elements %}
+    <a href="{% url "showquizzes" %}">Show Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
 
 {% block content %}
-    {% if final_questions %}
-            <form action="" method='POST'>
+    <div class="container mt-5">
+        {% if final_questions %}
+        <h1 class="text-center">{{ quiz_title }}</h1>
+            <form action="" method="POST">
                 {% csrf_token %}
                 {% for question in final_questions %}
-                    <h2>
-                        {{question.question_title}}
-                    </h2>
-                    {% if question.type == "mcq" %}
-                        <label for="option1">
-                            <input type="radio" name="{{question.id}}" id="option1"  value="{{ question.answers.0.option1 }}" > {{ question.answers.0.option1 }} 
-                        </label>
-                        <label for="option2">
-                            <input type="radio" name="{{question.id}}" id="option2" value="{{ question.answers.1.option2 }}"> {{ question.answers.1.option2 }}
-                        </label>
-                        <label for="option3">
-                            <input type="radio" name="{{question.id}}" id="option3" value="{{ question.answers.2.option3 }}"> {{ question.answers.2.option3 }}
-                        </label>
-                        <label for="option4">
-                            <input type="radio" name="{{question.id}}" id="option4" value="{{ question.answers.3.option4 }}"> {{ question.answers.3.option4 }}
-                        </label>
-                    {% elif question.type == "subjective" %}
-                        <input type="text" name="{{question.id}}" id="answer">
-                    {% endif %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title h3 mb-3">{{ question.question_title }}</h2>
+                            {% if question.type == "mcq" %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="{{ question.id }}" id="option1" value="{{ question.answers.0.option1 }}" required>
+                                    <label class="form-check-label h5" for="option1">{{ question.answers.0.option1 }}</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="{{ question.id }}" id="option2" value="{{ question.answers.1.option2 }}" required>
+                                    <label class="form-check-label h5" for="option2">{{ question.answers.1.option2 }}</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="{{ question.id }}" id="option3" value="{{ question.answers.2.option3 }}" required>
+                                    <label class="form-check-label h5" for="option3">{{ question.answers.2.option3 }}</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="{{ question.id }}" id="option4" value="{{ question.answers.3.option4 }}" required>
+                                    <label class="form-check-label h5" for="option4">{{ question.answers.3.option4 }}</label>
+                                </div>
+                            {% elif question.type == "subjective" %}
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-lg" name="{{ question.id }}" id="answer" placeholder="Your answer" required>
+                                </div>
+                            {% elif question.type == "boolean" %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="{{ question.id }}" id="option1" value="true" required> True
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="{{ question.id }}" id="option1" value="false" required> False
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
                 {% endfor %}
-                <br><br>
-                <div>
-                    <input type="submit" value="Submit Answers">
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Submit Answers</button>
                 </div>
             </form>
-    {% else %}
-    <h3>No questions Added in Quiz yet By Quiz Host</h3>
-    {% comment %} <a href="{% url "marks" %}"> See Marks </a> {% endcomment %}
-    {% endif %}
+        {% else %}
+            <div class="alert alert-info mt-3">
+                <h3 class="h4">No questions added in the quiz yet by the quiz host.</h3>
+            </div>
+        {% endif %}
+    </div>
 {% endblock content %}

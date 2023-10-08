@@ -4,9 +4,18 @@
     <title>Quiz Management</title>
 {% endblock title %}
 
-{% block content %}
-    <a href="{% url "addquiz" %}"> Add Quiz </a> <br> <br>
-    <a href="{% url "draftquizzes" %}">Drafts</a> <br> <br>
+
+{% block nav_elements %}
+    <a href="{% url "addquiz" %}">Add New Quiz</a>
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
     <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
+
+{% block content %}
+    <h2>Quiz Management</h2>
+            <a href="{% url "addquiz" %}" class="btn btn-primary">Create New Quiz</a>
+            <a href="{% url "draftquizzes" %}" class="btn btn-secondary">Manage Draft Quizzes</a>
+            <a href="{% url "profile" %}" class="btn btn-info">View Profile</a>
 {% endblock content %}
 

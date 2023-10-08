@@ -16,6 +16,9 @@ class Mark(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     quiz_attempter = models.ForeignKey(QuizAttempter, on_delete=models.CASCADE)
     
+    class Meta:
+        ordering = ['-marks']
+    
 
 class Discussion(models.Model):
     quiz_attempter = models.ForeignKey(QuizAttempter, on_delete=models.CASCADE)

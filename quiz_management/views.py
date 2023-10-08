@@ -5,8 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from quiz_attempter_management.models import Mark
 from .decorators import host_required, admin_required
-from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm
-from .models import  Quiz, Question, Announcement, QuizAndQuizAttempter
+from .forms import QuizForm, QuizAttempterForm, MCQsQuestionForm, SubjectiveQuestionForm, AnnouncementForm, BooleanQuestionForm
+from .models import  Quiz, Question, Announcement, QuizAndQuizAttempter, QuizAttempter
 from .utils import get_emails_from_excel_file, add_quiz_attempter_by_email, add_quiz_attempter_by_emails
 
 
@@ -67,11 +67,27 @@ def add_questions(request, quiz_id):
 
 
 @host_required
+def delete_question(request, quiz_id, question_id):
+    quesiton = Question.objects.get(id=question_id)
+    quesiton.delete()
+    return HttpResponseRedirect(f'/quiz-management/edit-draft/{quiz_id}/')
+
+
+@host_required
 def open_draft(request, quiz_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     questions = Question.objects.filter(quiz=quiz)
+    final_questions = []
+    for question in questions:
+        question_details = json.loads(question.question_details)
+        final_questions.append(
+            {
+            "title": question_details['question_title'],
+            "type": question_details['type'],
+            'id': question.id
+            })
     return render(request, 'quiz_management/quiz_draft.html', {'quiz': quiz, 
-                                                               'questions': questions})
+                                                               'questions': final_questions})
 
 
 def mcq_question(question_form):
@@ -109,6 +125,19 @@ def subjective_question(question_form):
     return json.dumps(question_details), marks, is_public
 
 
+def boolean_question(question_form):
+    question_title = question_form.cleaned_data['title']
+    answer = question_form.cleaned_data['answer']
+    marks = question_form.cleaned_data['marks']
+    is_public = question_form.cleaned_data['is_public']
+    question_details = {
+        'question_title': question_title, 
+        'answers': answer,
+        'type': 'boolean'
+    }
+    return json.dumps(question_details), marks, is_public
+
+
 @host_required
 def queston(request, quiz_id, type):
     if request.method == "POST":
@@ -121,10 +150,11 @@ def queston(request, quiz_id, type):
                 question.quiz.add(quiz)
                 question.save()
                 messages.success(request, "MCQ added successfully!")
-                return HttpResponseRedirect(f'/quiz_management/question/{quiz_id}/mcq/')
+                return HttpResponseRedirect(f'/quiz-management/question/{quiz_id}/mcq/')
             
             return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
                                                                         'question_type': type,
+                                                                        'quiz_id': quiz_id
                                                                         })  
         elif type == "subjective":
             question_form = SubjectiveQuestionForm(request.POST)
@@ -135,22 +165,39 @@ def queston(request, quiz_id, type):
                 question.quiz.add(quiz)
                 question.save()
                 messages.success(request, "Subjective Question Added Successfully!")
-                return HttpResponseRedirect(f'/quiz_management/question/{quiz_id}/subjective/')
+                return HttpResponseRedirect(f'/quiz-management/question/{quiz_id}/subjective/')
             
             return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
                                                                         'question_type': type,
+                                                                        'quiz_id': quiz_id
                                                                         })  
          
+        elif type == "boolean":
+            print("working")
+            question_form = BooleanQuestionForm(request.POST)
+            if question_form.is_valid():
+                question_details, marks, is_public = boolean_question(question_form)
+                quiz = Quiz.objects.get(pk=quiz_id)
+                question = Question.objects.create(question_details=question_details, marks=marks, is_public=is_public)
+                question.quiz.add(quiz)
+                question.save()
+                messages.success(request, "Boolean Question Added Successfully!")
+                return HttpResponseRedirect(f'/quiz-management/question/{quiz_id}/boolean/')
+            
+            return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
+                                                                        'question_type': type,
+                                                                        'quiz_id': quiz_id
+                                                                        })  
     else:      
         if type == "mcq":
             question_form = MCQsQuestionForm()
         elif type == "subjective":
             question_form = SubjectiveQuestionForm()
-        else:
-            question_form = "This is Binary Choice"
-        
+        elif type == "boolean":
+            question_form = BooleanQuestionForm()
         return render(request, 'quiz_management/add_question.html', {'question_form': question_form, 
-                                                                 'question_type': type
+                                                                 'question_type': type,
+                                                                 'quiz_id': quiz_id
                                                                  })
 
 
@@ -172,11 +219,22 @@ def add_quiz_attempter(request, quiz_id):
     else:       
         quiz_attempter_form = QuizAttempterForm()
     quiz_attempters = QuizAndQuizAttempter.objects.filter(quiz=quiz_id)
-        
-    print(quiz_attempters)
     return render(request, 'quiz_management/add_quiz_attempter.html', {'quiz_attempter_form': quiz_attempter_form,
-                                                                       'quiz_attempters': quiz_attempters
-                                                                       })
+                                                                       'quiz_attempters': quiz_attempters, 
+                                                                       'quiz_id': quiz_id
+    
+                                                                   })
+
+
+from django.db.models import Q
+@host_required
+def delete_quiz_attempter(request, quiz_attempter_id, quiz_id):
+    quiz = Quiz.objects.get(id=quiz_id)
+    quiz_attempter = QuizAttempter.objects.get(id=quiz_attempter_id)
+    quiz_attempter = QuizAndQuizAttempter.objects.get(Q(quiz=quiz) & Q(quiz_attempter=quiz_attempter))
+    quiz_attempter.delete()
+    return HttpResponseRedirect(f'/quiz-management/add-quiz-attempter/{quiz_id}/')
+
     
 @host_required
 def add_announcement(request, quiz_id):
@@ -186,7 +244,6 @@ def add_announcement(request, quiz_id):
         if announcement_form.is_valid():
             subject = announcement_form.cleaned_data['subject']
             details = announcement_form.cleaned_data['details']
-            # preparation_meterial = announcement_form.cleaned_data['preparation_material']
             announcement = Announcement(host=request.user, quiz=quiz, subject=subject, details=details)
             announcement.save()
             announcement_form = AnnouncementForm()
@@ -195,11 +252,26 @@ def add_announcement(request, quiz_id):
         announcement_form = AnnouncementForm()
     previous_announcements = Announcement.objects.filter(quiz=quiz)
     return render(request, 'quiz_management/announcement.html', {'announcement_form': announcement_form, 
-                                                                 'previous_announcements': previous_announcements
+                                                                 'previous_announcements': previous_announcements,
+                                                                 'quiz_id': quiz_id
                                                                  })
+
+
+def check_if_quiz_attempted():
+    from django.utils import timezone
+    current_time = timezone.now()
+    quizzes = Quiz.objects.all()
+    for quiz in quizzes:
+        if current_time >= quiz.start_time and current_time <= quiz.end_time:
+            pass
+        else:
+            quiz.is_quiz_attempted = True
+            quiz.save()
+
 
 @host_required
 def generate_report(request, quiz_id):
+    check_if_quiz_attempted()
     quiz = Quiz.objects.get(id=quiz_id)
     marks = Mark.objects.filter(quiz_id=quiz_id)
     quiz_attempters = QuizAndQuizAttempter.objects.filter(quiz=quiz_id)
@@ -209,6 +281,7 @@ def generate_report(request, quiz_id):
             non_attempters.append(
                 quiz_attempter.quiz_attempter.username
             )
+    
     return render(request, 'quiz_management/report.html', {'marks': marks, 'non_attempters': non_attempters,
                                                            'is_quiz_attempted': quiz.is_quiz_attempted,
                                                            'quiz_title': quiz.title})
@@ -219,3 +292,4 @@ def browse_public_questions(request, quiz_id):
     questions = Question.objects.all()
     public_questions = [question for question in questions if question.is_public]
     return HttpResponse("PUblic Questions")
+

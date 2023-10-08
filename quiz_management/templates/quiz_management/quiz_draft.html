@@ -5,22 +5,54 @@
     <title>Current Quiz</title>
 {% endblock title %}
 
+{% block nav_elements %}
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
 {% block content %}
-    <h1>  {{ quiz }}  | Quiz Draft </h1>
+    <h1 class="text-center display-4 mb-4" style="color: #333">  {{ quiz }}  | Add Questions Here </h1>
     <a href="{% url "addquestion" quiz.id %}"></a>
-    <nav>
-        <a href="{% url "questiontype" quiz.id "mcq" %}"> Multiple Choice Question </a> <br> <br>
-        <a href="{% url "questiontype" quiz.id "subjective" %}"> Subjective Question </a> <br> <br>
-        {% comment %} <a href="{% url "questiontype" quiz.id "binary" %}"> Binary Choice </a> <br> <br> {% endcomment %}
-    </nav>
 
-    <br>
-    <a href="{% url "quizmanagement" %}"> Quiz Management </a>
+    <div class="d-flex justify-content-center">
+        <div class="card p-3" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
+            <a href="{% url "questiontype" quiz.id "mcq" %}" class="btn btn-secondary btn-lg btn-block">Multiple Choice Question</a>
+            <a href="{% url "questiontype" quiz.id "subjective" %}" class="btn btn-secondary btn-lg btn-block">Subjective Question</a>
+            <a href="{% url "questiontype" quiz.id "boolean" %}" class="btn btn-secondary btn-lg btn-block">Boolean Question</a>
+        </div>
+    </div>
 
-    {% comment %} <h3>Current Questions</h3>
-    {% for question in questions %}
-       {{ question.id }} <br>
-       {{ question.question_details  }}
 
-    {% endfor %} {% endcomment %}
+
+<div class="container mt-4">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Question Title</th>
+                <th scope="col">Question Type</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if questions %}
+                {% for question in questions %}
+                    <tr>
+                        <td>{{ question.title }}</td>
+                        <td>{{ question.type }}</td>
+                        <td>
+                            <a href="{% url 'deletequestion' quiz.id  question.id %}" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">No questions added yet</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+
+
 {% endblock content %}

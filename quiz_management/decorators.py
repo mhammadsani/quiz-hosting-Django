@@ -11,7 +11,7 @@ def host_required(view_function):
                     return view_function(request, *args, **kwargs)
             except QuizAttempter.DoesNotExist:
                 return view_function(request, *args, **kwargs)
-        return HttpResponse("You are not Host/")
+        return HttpResponse("You are not Host")
     return check_host
 
 

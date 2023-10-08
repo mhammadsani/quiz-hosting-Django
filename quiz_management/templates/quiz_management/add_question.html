@@ -4,34 +4,75 @@
     <title>Add Question</title>
 {% endblock title %}
 
+{% block nav_elements %}
+    <a href="{% url "draft" quiz_id %}">Edit Quiz</a>
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+    <a href="{% url "addquizattempter" quiz_id %}">Add Quiz Attempter</a>
+{% endblock nav_elements %}
 
 {% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form method="POST">
 
-    <br> <br>
-    <form action="">
-        {% csrf_token %}
-        {% for field in question %}
-            {{ field.label_tag }} {{ field }} {{ fields.errors }} <br> <br>
-        {% endfor %}
-    </form>
-    {% if question_form %}
-        {% if questoin_type == mcq %}
-            <form action="" method="POST" novalidate>
-                {% csrf_token %}
-                {% for question_info in  question_form %}
-                    {{ question_info.label_tag }} {{ question_info }} {{ question_info.errors }} <br> <br>
-            {% endfor %}
-        {% endif %}
-        <input type="submit" value="Add">
-        </form>
-    {% endif %}
-    {% if messages %}
-        {% for message in messages %}  
-           <h2> {{ message }} </h2>
-        {% endfor %}
-    {% endif %}
-    <br>
-    <a href="{% url "quizmanagement" %}"> Quiz Management </a>  <br> <br>
-    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+                            {% csrf_token %}
+                            {% for field in question %}
+                                <div class="form-group">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            {% endfor %}
+
+                            {% if question_form %}
+                                {% if question_type == "mcq" %}
+                                    <h1 class="text-center text-primary">Add MCQs Here</h1>
+                                    {% for question_info in question_form %}
+                                        <div class="form-group">
+                                            {{ question_info.label_tag }}
+                                            {{ question_info }}
+                                            {{ question_info.errors }}
+                                        </div>
+                                    {% endfor %}
+                                {% elif question_type == "subjective" %}
+                                        <h1 class="text-center text-primary">Add Subjective Question Here</h1>
+                                        {% for question_info in question_form %}
+                                        <div class="form-group">
+                                            {{ question_info.label_tag }}
+                                            {{ question_info }}
+                                            {{ question_info.errors }}
+                                        </div>
+                                        {% endfor %}
+                                {% elif question_type == "boolean" %}
+                                        <h1 class="text-center text-primary">Add Boolean Question Here</h1>
+                                        {% for question_info in question_form %}
+                                        <div class="form-group">
+                                            {{ question_info.label_tag }}
+                                            {{ question_info }}
+                                            {{ question_info.errors }}
+                                        </div>
+                                        {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Add</button>
+                            </div>
+                        </form>
+
+                        {% if messages %}
+                            <div class="text-center mt-3">
+                                {% for message in messages %}  
+                                    <h2 style="color: #333;">{{ message }}</h2>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
-
