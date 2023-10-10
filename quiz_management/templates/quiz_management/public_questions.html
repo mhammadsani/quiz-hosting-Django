@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+    <title>Public Questions</title>
+{% endblock title %}
+
+{% block nav_elements %}
+    <a href="{% url "draftquizzes" %}">Draft Quizzes</a>
+    <a href="{% url "profile" %}">Profile</a>
+{% endblock nav_elements %}
+
+{% block content %} 
+   <div class="container">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Question Title</th>
+                    <th>Type</th>
+                    <th>Marks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for public_question in public_questions %}
+                    <tr>
+                        <td>{{ public_question.question_title }}</td>
+                        <td>{{ public_question.type }}</td>
+                        <td>{{ public_question.marks }}</td>
+                        <td><a class="btn btn-primary" href="{% url "addpublicquestion" quiz_id public_question.id%}">Add</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <h3 class="alert text-center">{{message}}</h3>
+        {% endfor %}
+    {% endif %}
+{% endblock content %}

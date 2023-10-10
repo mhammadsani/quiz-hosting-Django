@@ -146,39 +146,8 @@ class BooleanQuestionForm(forms.Form):
         required=True
     )
     marks = forms.DecimalField(label="Marks")
-    is_public = forms.BooleanField(label="Is Public", required=False)
+    is_public = forms.BooleanField(label="Is Public", required=False) 
 
-
-# class BooleanQuestionForm(forms.Form):
-#     title = forms.CharField(label="Queston Title", max_length=200)
-#     answer = forms.ChoiceField(
-#         label="Answer",
-#         choices=[("true", "True"), ("false", "False")],
-#         widget=forms.RadioSelect,
-#         required=True,
-#     )
-
-
-# class BooleanQuestionForm(forms.Form):
-#     title = forms.CharField(
-#         label="Question Title",
-#         max_length=200,
-#         widget=forms.TextInput(attrs={'class': 'form-control'})
-#     )
-#     is_true = forms.BooleanField(
-#         label="True",
-#         required=True,
-#         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-#     )
-#     marks = forms.DecimalField(
-#         label="Marks",
-#         widget=forms.NumberInput(attrs={'class': 'form-control'})
-#     )
-#     is_public = forms.BooleanField(
-#         required=False
-#     )
-
-   
 
 class AnnouncementForm(forms.ModelForm):
     class Meta:

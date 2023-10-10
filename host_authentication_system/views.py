@@ -1,58 +1,59 @@
-from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from quiz_management.models import QuizAttempter, Quiz, Announcement
+from .constants import (
+    CHANGE_PASSWORD_PAGE, CHANGE_PASSWORD_URL, HOMEPAGE_URL, INDEX_PAGE, LOGIN_PAGE, LOGIN_URL,
+    PASSWORD, POST, PROFILE_PAGE, PROFILE_URL, SIGN_UP_PAGE, USERNAME, WAIT_PAGE, WAIT_PAGE_URL,
+)
+from .decorators import is_authenticated
 from .forms import HostSignUpForm
 
 
 def homepage(request):
-    return render(request, 'host_auth_system/index.html')
+    return render(request, INDEX_PAGE)
 
 
+@is_authenticated
 def sign_up(request):
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/profile/')
-    if request.method == 'POST':
+    if request.method == POST:
         form = HostSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             user.is_active = False
             user.save()
-            return HttpResponseRedirect('/wait/')
+            return HttpResponseRedirect(WAIT_PAGE_URL)
     else:
         form = HostSignUpForm()
-    return render(request, 'host_auth_system/sign_up.html', {'form': form})
+    return render(request, SIGN_UP_PAGE, {'form': form})
 
 
+@is_authenticated
 def user_login(request):
-    if request.user.is_authenticated:
-        return HttpResponseRedirect('/profile/')
-    if request.method == "POST":
+    if request.method == POST:
         form = AuthenticationForm(request=request, data=request.POST)
         if form.is_valid():
-           username = form.cleaned_data['username']
-           password = form.cleaned_data['password']
+           username = form.cleaned_data[USERNAME]
+           password = form.cleaned_data[PASSWORD]
            user = authenticate(username=username, password=password)
            if user:
                 login(request, user=user)
                 try:
                     if quiz_attempter:=QuizAttempter.objects.get(username=username):
                         if quiz_attempter.is_first_time_login:
-                            return redirect('/changepassword/')
-                        if quiz_attempter.is_quiz_attempter:
-                            return redirect('/profile/')
-                except Exception as err:
-                    return HttpResponseRedirect('/profile/')
+                            return redirect(CHANGE_PASSWORD_URL)
+                        return redirect(PROFILE_URL)
+                except QuizAttempter.DoesNotExist:
+                    return HttpResponseRedirect(PROFILE_URL)
     else:       
         form = AuthenticationForm()
-    return render(request, 'host_auth_system/login.html', {'form': form})
+    return render(request, LOGIN_PAGE, {'form': form})
 
 
 def waitpage(request):
-    return render(request, 'host_auth_system/wait.html')
+    return render(request, WAIT_PAGE)
 
 
 def profile(request):
@@ -61,19 +62,19 @@ def profile(request):
             user=QuizAttempter.objects.get(username=request.user.username)
             if user.is_quiz_attempter:
                 is_quiz_attempter = True
-        except Exception:
+        except QuizAttempter.DoesNotExist:
             is_quiz_attempter = False
-        return render(request, 'host_auth_system/profile.html', {'user': request.user, 'is_quiz_attempter': is_quiz_attempter})   
-    return HttpResponseRedirect('/')
+        return render(request, PROFILE_PAGE, {'user': request.user, 'is_quiz_attempter': is_quiz_attempter})   
+    return HttpResponseRedirect(HOMEPAGE_URL)
 
 
 def host_logout(request):
     logout(request)
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect(HOMEPAGE_URL)
 
 
 def change_password(request):
-    if request.method == "POST":
+    if request.method == POST:
         updated_credentials = SetPasswordForm(user=request.user, data=request.POST)
         if updated_credentials.is_valid():
             updated_credentials.save()
@@ -82,11 +83,11 @@ def change_password(request):
                 if user.is_quiz_attempter:
                     user.is_first_time_login = False
                     user.save()
-            except Exception as e:
-                return HttpResponseRedirect('/quiz-attempter-homepage/')
-            return HttpResponseRedirect('/profile/')
+            except QuizAttempter.DoesNotExist:
+                return HttpResponseRedirect(LOGIN_URL)
+            return HttpResponseRedirect(PROFILE_URL)
         else:
             change_password_form = updated_credentials
     else:
         change_password_form = SetPasswordForm(user=request.user)
-    return render(request, 'host_auth_system/change_password.html' ,{'change_password_form':change_password_form})
+    return render(request, CHANGE_PASSWORD_PAGE ,{'change_password_form':change_password_form})

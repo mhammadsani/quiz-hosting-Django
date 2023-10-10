@@ -15,5 +15,7 @@ urlpatterns = [
     path('generate-report/<quiz_id>', views.generate_report, name='generatereport'),
     path('browse-public-questions/<int:quiz_id>/', views.browse_public_questions, name="publicquestions"),
     path('delete-quiz-attempter/<int:quiz_attempter_id>/<int:quiz_id>/', views.delete_quiz_attempter, name="deletequizattempter"),
-    path('delete-question/<int:quiz_id>/<int:question_id>/', views.delete_question, name="deletequestion")
+    path('delete-question/<int:quiz_id>/<int:question_id>/', views.delete_question, name="deletequestion"),
+    path('browse-questions/<int:quiz_id>/', views.browse_public_questions, name="browsequestions" ),
+    path('add-pubilc-question/<int:quiz_id>/<int:question_id>/', views.add_pubilc_question, name="addpublicquestion")
 ]

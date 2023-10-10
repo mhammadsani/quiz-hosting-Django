@@ -23,16 +23,34 @@
             </tr>
         </thead>
         <tbody>
-            {% for quiz in quizzes %}
+            {% for quiz in unattempted_quizzes %}
                 {% if quiz.host == host %}
                     <tr>
                         <td>{{ quiz.title }}</td>
                         <td class="action-links d-flex flex-column justify-content-center">
+                            <a href="{% url 'browsequestions' quiz.id %}" class="btn" style="color: white; background-color: #333;">Browse Questions</a>  <br>
                             <a href="{% url 'draft' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Add Questions</a>
                             <a href="{% url 'addquizattempter' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Add Quiz Attempters</a>
                             <a href="{% url 'announcement' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Announcement</a>
                             <a href="{% url 'viewdiscussions' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">View Discussions</a>
-                            <a href="{% url 'generatereport' quiz.id %}" class="btn" style="color: white; background-color: #333;">Generate Quiz Report</a>
+                            <a href="{% url 'generatereport' quiz.id %}" class="btn" style="color: white; background-color: #333;">Generate Quiz Report</a> 
+                        </td>
+                        <td>{{ quiz.start_time }}</td>
+                        <td>{{ quiz.end_time }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            {% for quiz in attempted_quizzes %}
+                {% if quiz.host == host %}
+                    <tr>
+                        <td>{{ quiz.title }}</td>
+                        <td class="action-links d-flex flex-column justify-content-center">
+                            {% comment %} <a href="{% url 'browsequestions' quiz.id %}" class="btn" style="color: white; background-color: #333;">Browse Questions</a>  <br>
+                            <a href="{% url 'draft' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Add Questions</a>
+                            <a href="{% url 'addquizattempter' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Add Quiz Attempters</a> {% endcomment %}
+                            <a href="{% url 'announcement' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">Announcement</a>
+                            <a href="{% url 'viewdiscussions' quiz.id %}" class="btn mb-2" style="color: white; background-color: #333;">View Discussions</a>
+                            <a href="{% url 'generatereport' quiz.id %}" class="btn" style="color: white; background-color: #333;">Generate Quiz Report</a> 
                         </td>
                         <td>{{ quiz.start_time }}</td>
                         <td>{{ quiz.end_time }}</td>

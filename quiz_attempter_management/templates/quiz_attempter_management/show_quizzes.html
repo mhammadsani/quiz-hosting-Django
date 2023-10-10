@@ -40,7 +40,8 @@
 {% endblock nav_elements %}
 
 {% block content %}
-{% if quizzes %}
+<h3>Available Quizzes </h3>
+{% if available_quizzes %}
     <table>
         <thead>
             <tr>
@@ -53,7 +54,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for quiz in quizzes %}
+            {% for quiz in available_quizzes %}
                 <tr>
                     <td>{{quiz.title}}</td>
                     <td>{{quiz.start_time}}</td>
@@ -69,7 +70,40 @@
         </tbody>
     </table>
 {% else %}
-    <h3>No Quiz Yet</h3>
+    <h3 class='text-center text-primary'>No Available Quiz Yet</h3>
+{% endif %}
+
+<h3>Attempted Quizzes</h3>
+{% if attempted_quizzes %}
+    <table>
+        <thead>
+            <tr>
+                <th>Quiz Title</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Announcement</th>
+                <th class="actions">Actions</th>
+                <th>Discussion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in attempted_quizzes %}
+                <tr>
+                    <td>{{quiz.title}}</td>
+                    <td>{{quiz.start_time}}</td>
+                    <td>{{quiz.end_time}}</td>
+                    <td><a href="{% url "announcements" quiz.id %}">Announcements</a></td>
+                    <td class="actions">
+                        <a href="{% url "marks" quiz.id %}">See Marks</a>
+                    </td>
+                    <td><a href="{% url "discussion" quiz.id%}">Discussion</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <h3 class='text-center text-primary'>No Quiz Yet</h3>
 {% endif %}
 </body>
 </html>

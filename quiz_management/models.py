@@ -28,11 +28,6 @@ class Question(models.Model):
     def __str__(self) -> str:
         return "Question " + str(self.id)
 
-    
-
-class QuizAttemptersExcel(models.Model):
-    file = models.FileField(upload_to='uploads/')    
-
 
 class QuizAttempter(User):
     quiz_id = models.ManyToManyField(Quiz, through="QuizAndQuizAttempter")

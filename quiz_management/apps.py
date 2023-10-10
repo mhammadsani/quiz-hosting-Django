@@ -7,3 +7,4 @@ class QuizAttempterConfig(AppConfig):
 
     def ready(self) -> None:
         import quiz_management.signals
+        

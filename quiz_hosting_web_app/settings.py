@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'host_authentication_system',
     'quiz_management',
-    'quiz_attempter_management'
+    'quiz_attempter_management',
+    'django_rename_app',
 ]
 
 MIDDLEWARE = [
