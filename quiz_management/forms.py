@@ -1,5 +1,5 @@
 from django import forms
-from .models import Quiz, QuizAttempter, Question, Announcement
+from .models import Quiz, QuizAttempter, Announcement
 
 
 class QuizAttempterForm(forms.ModelForm):
@@ -39,25 +39,6 @@ class QuizForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'category': forms.TextInput(attrs={'class': 'form-control'}),
         }      
-        
-
-# class MCQsQuestionForm(forms.Form):
-#     title = forms.CharField(label='Question Title', max_length=200)
-#     option_1 = forms.CharField(label='Option 1', max_length=200)
-#     option_2 = forms.CharField(label='Option 2', max_length=200)
-#     option_3 = forms.CharField(label='Option 3', max_length=200)
-#     option_4 = forms.CharField(label='Option 4', max_length=200)
-#     answer = forms.ChoiceField(
-#         label='Correct Answer',
-#         choices=(
-#             ('option1', 'Option 1'),
-#             ('option2', 'Option 2'),
-#             ('option3', 'Option 3'),
-#             ('option4', 'Option 4'),
-#         ),
-#     )
-#     marks = forms.DecimalField(label='Marks')
-#     is_public = forms.BooleanField(required=False)
 
 
 class MCQsQuestionForm(forms.Form):
@@ -103,14 +84,6 @@ class MCQsQuestionForm(forms.Form):
     is_public = forms.BooleanField(
         required=False
     )
-
-    
-
-# class SubjectiveQuestionForm(forms.Form):
-#     title = forms.CharField(label="Question Title", max_length=200)
-#     answer = forms.CharField(label="Correct Answer", max_length=400)
-#     marks = forms.DecimalField(label="Marks")
-#     is_public = forms.BooleanField(required=False)
 
 
 class SubjectiveQuestionForm(forms.Form):

@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from host_authentication_system import views
 
 
@@ -8,6 +8,6 @@ urlpatterns = [
     path('login/', views.user_login, name="login"),
     path('wait/', views.waitpage, name="waitpage"),
     path('profile/', views.profile, name="profile"),
-    path('logout/', views.host_logout, name="logout"),
+    path('logout/', views.user_logout, name="logout"),
     path('change-password/', views.change_password, name="changepassword"),
 ]

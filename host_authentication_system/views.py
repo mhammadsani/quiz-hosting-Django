@@ -1,9 +1,8 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
-from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from quiz_management.models import QuizAttempter, Quiz, Announcement
+from quiz_management.models import QuizAttempter
 from .constants import (
     CHANGE_PASSWORD_PAGE, CHANGE_PASSWORD_URL, HOMEPAGE_URL, INDEX_PAGE, LOGIN_PAGE, LOGIN_URL,
     PASSWORD, POST, PROFILE_PAGE, PROFILE_URL, SIGN_UP_PAGE, USERNAME, WAIT_PAGE, WAIT_PAGE_URL,
@@ -68,7 +67,7 @@ def profile(request):
     return HttpResponseRedirect(HOMEPAGE_URL)
 
 
-def host_logout(request):
+def user_logout(request):
     logout(request)
     return HttpResponseRedirect(HOMEPAGE_URL)
 

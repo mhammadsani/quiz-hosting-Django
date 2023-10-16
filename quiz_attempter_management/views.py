@@ -14,7 +14,7 @@ from .constants import (
 from .decorators import is_quiz_attempter, is_host_or_quiz_attempter
 from .forms import DiscussionForm, CommentForm
 from .utils import (
-    quiz_attempter, is_quiz_attemptted, save_marks, get_final_questions, 
+    check_quiz_attempter, is_quiz_attemptted, save_marks, get_final_questions, 
     get_user_answer_and_correct_answers, get_total_marks
 )
 
@@ -30,16 +30,21 @@ def show_quizzes(request):
     quizzes = quiz_attempter.quiz_id.all()
     available_quizzes = []
     attempted_quizzes = []
+    quiz_to_be_started_yet = []
     current_time = timezone.now()
     for quiz in quizzes:
         if current_time >= quiz.start_time and current_time <= quiz.end_time:
             available_quizzes.append(quiz)
+        elif current_time < quiz.start_time:
+            quiz_to_be_started_yet.append(quiz)
         else:
             quiz.is_quiz_attempted = True
             quiz.save()
             attempted_quizzes.append(quiz)
     return render(request, QUIZZES_PAGE, {'available_quizzes': available_quizzes, 
-                                                                           'attempted_quizzes': attempted_quizzes})
+                                        'attempted_quizzes': attempted_quizzes,
+                                        'quiz_to_be_started_yet': quiz_to_be_started_yet
+                                        })
 
 
 @is_quiz_attempter
@@ -63,7 +68,7 @@ def start_discussion(request, quiz_id):
     else:
         discussion_form = DiscussionForm()
     return render(request, START_DISCUSSION_PAGE , {'discussion_form': discussion_form,
-                                                                                'quiz_id': quiz_id})
+                                                    'quiz_id': quiz_id})
 
 
 @is_host_or_quiz_attempter
@@ -76,8 +81,8 @@ def view_discussions(request, quiz_id):
     is_quiz_attempter = quiz_attempter(request.user)
     discussions = Discussion.objects.filter(quiz=quiz_id)
     return render(request, VIEW_DISCUSSION_PAGE, {"discussions": discussions, 
-                                                    'quiz_id': quiz_id,
-                                                    'is_quiz_attempter': is_quiz_attempter})
+                                                'quiz_id': quiz_id,
+                                                'is_quiz_attempter': is_quiz_attempter})
 
 
 @is_host_or_quiz_attempter
@@ -93,13 +98,18 @@ def full_discussion(request, discussion_id):
             comment.save()
             comment_form = CommentForm()
 
-    quizAttempter = QuizAttempter.objects.get(id=discussion.quiz_attempter.id)
+    quiz_attempter = QuizAttempter.objects.get(id=discussion.quiz_attempter.id)
     comments = Comment.objects.filter(discussion=discussion)
     comment_form = CommentForm()
-    is_quiz_attempter = quiz_attempter(request)
-    return render(request, FULL_DISCUSSION_PAGE, {'discussion': discussion, 'comments': comments, 'author': quizAttempter.username, 'comment_form': comment_form,
-                                                                              'quiz_id': quiz_id,
-                                                                              'is_quiz_attempter': is_quiz_attempter})
+    is_quiz_attempter = check_quiz_attempter(request)
+    return render(request, FULL_DISCUSSION_PAGE, 
+                  {'discussion': discussion, 'comments': comments, 
+                    'author': quiz_attempter.username,
+                    'comment_form': comment_form,
+                    'quiz_id': quiz_id,
+                    'is_quiz_attempter': is_quiz_attempter
+                    }
+                  )
 
 
 @is_quiz_attempter
@@ -110,7 +120,7 @@ def attempt_quiz(request, quiz_id):
     final_questions = []
     if request.method == POST:
         questions = Question.objects.filter(quiz=quiz_id)
-        quiz_attempter=QuizAttempter.objects.get(id=request.user.id)
+        quiz_attempter = QuizAttempter.objects.get(id=request.user.id)
         quiz = Quiz.objects.get(id=quiz_id)
         for question in questions:
             answer = request.POST.get(str(question.id))

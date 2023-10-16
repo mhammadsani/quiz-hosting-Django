@@ -144,9 +144,7 @@ def check_if_quiz_attempted():
     current_time = timezone.now()
     quizzes = Quiz.objects.all()
     for quiz in quizzes:
-        if current_time >= quiz.start_time and current_time <= quiz.end_time:
-            pass
-        else:
+        if current_time >= quiz.end_time:
             quiz.is_quiz_attempted = True
             quiz.save()
             

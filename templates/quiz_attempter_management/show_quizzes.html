@@ -105,6 +105,36 @@
 {% else %}
     <h3 class='text-center text-primary'>No Quiz Yet</h3>
 {% endif %}
+
+
+<h3>Future Quizzes</h3>
+{% if quiz_to_be_started_yet %}
+    <table>
+        <thead>
+            <tr>
+                <th>Quiz Title</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Announcement</th>
+                <th>Discussion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quiz in quiz_to_be_started_yet %}
+                <tr>
+                    <td>{{quiz.title}}</td>
+                    <td>{{quiz.start_time}}</td>
+                    <td>{{quiz.end_time}}</td>
+                    <td><a href="{% url "announcements" quiz.id %}">Announcements</a></td>
+                    <td><a href="{% url "discussion" quiz.id%}">Discussion</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <h3 class='text-center text-primary'>No Quiz to be started later</h3>
+{% endif %}
 </body>
 </html>
 

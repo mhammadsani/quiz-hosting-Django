@@ -2,7 +2,7 @@ import json
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.datastructures import MultiValueDictKeyError                    
@@ -93,16 +93,16 @@ def delete_question(request, quiz_id, question_id):
 def open_draft(request, quiz_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     questions = Question.objects.filter(quiz=quiz)
-    final_questions = []
+    current_quiz_questions = []
     for question in questions:
         question_details = json.loads(question.question_details)
-        final_questions.append(
+        current_quiz_questions.append(
             {
             "title": question_details[QUESTION_TITLE],
             "type": question_details[TYPE],
             'id': question.id
             })
-    return render(request, QUIZ_DRAFT_PAGE, {'quiz': quiz, 'questions': final_questions})
+    return render(request, QUIZ_DRAFT_PAGE, {'quiz': quiz, 'questions': current_quiz_questions})
     
     
 @host_required
@@ -157,7 +157,7 @@ def queston(request, quiz_id, type):
 
 @host_required
 def add_quiz_attempter(request, quiz_id):
-    if request.method == "POST":
+    if request.method == POST:
         quiz_attempter_form = QuizAttempterForm(request.POST)
         if quiz_attempter_form.is_valid():
             try:

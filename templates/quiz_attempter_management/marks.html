@@ -16,13 +16,13 @@
     <div class="container mt-5">
         <div class="card">
             <div class="card-body text-center">
-                {% if total_marks %}
+                {% if total_marks %} 
                     <h2 class="card-title">Marks Obtained:</h2>
                     <h1 class="display-3">{{ obtained_marks }} / {{ total_marks }}</h1>
                 {% else %}
                     <h3 class="card-title">Quiz not attempted yet!</h3>
                     <a href="{% url 'attemptquiz' quiz_id %}" class="btn btn-primary">Attempt Quiz</a>
-                {% endif %}
+                {% endif %} 
             </div>
         </div>
     </div>

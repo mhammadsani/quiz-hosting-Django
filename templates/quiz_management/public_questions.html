@@ -12,6 +12,7 @@
 
 {% block content %} 
    <div class="container">
+    {% if public_questions %}
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -32,6 +33,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+            <h3 class="text-center">No Public Questions To Browse</h3>
+        {% endif %}
     </div>
     {% if messages %}
         {% for message in messages %}

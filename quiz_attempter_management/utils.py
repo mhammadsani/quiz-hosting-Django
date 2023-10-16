@@ -12,7 +12,7 @@ from .constants import (
 )
 
 
-def quiz_attempter(user):
+def check_quiz_attempter(user):
     try: 
         user.quizattempter
         return True
