@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'host_authentication_system',
     'quiz_management',
     'quiz_attempter_management',
-    'django_rename_app',
 ]
 
 MIDDLEWARE = [
