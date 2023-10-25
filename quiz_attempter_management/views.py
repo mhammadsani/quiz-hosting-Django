@@ -78,7 +78,7 @@ def discussion_details(request, quiz_id):
 
 @is_host_or_quiz_attempter
 def view_discussions(request, quiz_id):
-    is_quiz_attempter = quiz_attempter(request.user)
+    is_quiz_attempter = check_quiz_attempter(request.user)
     discussions = Discussion.objects.filter(quiz=quiz_id)
     return render(request, VIEW_DISCUSSION_PAGE, {"discussions": discussions, 
                                                 'quiz_id': quiz_id,
@@ -101,7 +101,7 @@ def full_discussion(request, discussion_id):
     quiz_attempter = QuizAttempter.objects.get(id=discussion.quiz_attempter.id)
     comments = Comment.objects.filter(discussion=discussion)
     comment_form = CommentForm()
-    is_quiz_attempter = check_quiz_attempter(request)
+    is_quiz_attempter = check_quiz_attempter(request.user)
     return render(request, FULL_DISCUSSION_PAGE, 
                   {'discussion': discussion, 'comments': comments, 
                     'author': quiz_attempter.username,

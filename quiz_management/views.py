@@ -73,7 +73,8 @@ def host_management(request):
         in_active_hosts = request.POST.getlist(APPROVE_HOST)
         approve_host(in_active_hosts)
 
-    hosts = User.objects.all()
+    # hosts = User.objects.all()
+    hosts = User.objects.filter(is_active=False)
     return render(request, HOST_MANAGEMENT_PAGE, {'hosts': hosts})
     
    

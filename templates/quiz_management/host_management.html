@@ -16,6 +16,7 @@
 
 {% block content %}
     <div class="container mt-5">
+        {% if hosts %}
         <form action="" method="POST">
             {% csrf_token %}
             <table class="table">
@@ -42,5 +43,8 @@
             </table>
             <input type="submit" class="btn btn-primary" value="Approve">
         </form>
+        {% else %}
+        <h3 class='text-center text-danger'>No Hosts Here</h3>
+        {% endif %}
     </div>
 {% endblock content %}
